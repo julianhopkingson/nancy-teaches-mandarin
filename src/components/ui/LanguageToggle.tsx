@@ -1,16 +1,19 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { locales, localeNames, type Locale } from '@/lib/i18n/request';
 
 export function LanguageToggle({ currentLocale }: { currentLocale: Locale }) {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const router = useRouter();
 
     const switchLocale = (newLocale: Locale) => {
         const segments = pathname.split('/');
         segments[1] = newLocale;
-        router.push(segments.join('/'));
+        const queryString = searchParams.toString();
+        const newPath = segments.join('/') + (queryString ? `?${queryString}` : '');
+        router.push(newPath);
     };
 
     return (
@@ -20,8 +23,8 @@ export function LanguageToggle({ currentLocale }: { currentLocale: Locale }) {
                     key={locale}
                     onClick={() => switchLocale(locale)}
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all hover:scale-105 active:scale-95 ${currentLocale === locale
-                            ? 'bg-coral text-white shadow-md'
-                            : 'text-text-secondary hover:text-coral'
+                        ? 'bg-coral text-white shadow-md'
+                        : 'text-text-secondary hover:text-coral'
                         }`}
                 >
                     {locale === 'sc' ? '简' : locale === 'tc' ? '繁' : 'EN'}

@@ -12,13 +12,13 @@ interface RegisterFormProps {
 }
 
 const errorMessages: Record<string, string> = {
-    MISSING_FIELDS: 'usernameRequired',
-    USERNAME_LENGTH: 'usernameLength',
-    PASSWORD_LENGTH: 'passwordLength',
-    EMAIL_INVALID: 'emailInvalid',
-    USERNAME_TAKEN: 'usernameTaken',
-    EMAIL_TAKEN: 'emailTaken',
-    SERVER_ERROR: 'serverError',
+    MISSING_FIELDS: 'message.usernameRequired',
+    USERNAME_LENGTH: 'message.usernameLength',
+    PASSWORD_LENGTH: 'message.passwordLength',
+    EMAIL_INVALID: 'message.emailInvalid',
+    USERNAME_TAKEN: 'message.usernameTaken',
+    EMAIL_TAKEN: 'message.emailTaken',
+    SERVER_ERROR: 'message.serverError',
 };
 
 export function RegisterForm({ locale }: RegisterFormProps) {
@@ -35,14 +35,14 @@ export function RegisterForm({ locale }: RegisterFormProps) {
     const [error, setError] = useState<string | null>(null);
 
     const validateForm = (): string | null => {
-        if (!username) return t('usernameRequired');
-        if (username.length < 5 || username.length > 10) return t('usernameLength');
-        if (!email) return t('emailRequired');
+        if (!username) return t('message.usernameRequired');
+        if (username.length < 5 || username.length > 10) return t('message.usernameLength');
+        if (!email) return t('message.emailRequired');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) return t('emailInvalid');
-        if (!password) return t('passwordRequired');
-        if (password.length < 5 || password.length > 10) return t('passwordLength');
-        if (password !== confirmPassword) return t('passwordMismatch');
+        if (!emailRegex.test(email)) return t('message.emailInvalid');
+        if (!password) return t('message.passwordRequired');
+        if (password.length < 5 || password.length > 10) return t('message.passwordLength');
+        if (password !== confirmPassword) return t('message.passwordMismatch');
         return null;
     };
 
@@ -68,13 +68,13 @@ export function RegisterForm({ locale }: RegisterFormProps) {
             const data = await response.json();
 
             if (!response.ok) {
-                const messageKey = errorMessages[data.error] || 'serverError';
+                const messageKey = errorMessages[data.error] || 'message.serverError';
                 setError(t(messageKey));
             } else {
                 router.push(`/${locale}/auth/login`);
             }
         } catch (err) {
-            setError(t('serverError'));
+            setError(t('message.serverError'));
         }
         setLoading(false);
     };
@@ -86,7 +86,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            {t('username')} *
+                            {t('label.username')} *
                         </label>
                         <input
                             type="text"
@@ -100,7 +100,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
 
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            {t('email')} *
+                            {t('label.email')} *
                         </label>
                         <input
                             type="email"
@@ -113,7 +113,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
 
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            {t('password')} *
+                            {t('label.password')} *
                         </label>
                         <div className="relative">
                             <input
@@ -145,7 +145,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
 
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            {t('confirmPassword')} *
+                            {t('label.confirmPassword')} *
                         </label>
                         <div className="relative">
                             <input
@@ -184,13 +184,13 @@ export function RegisterForm({ locale }: RegisterFormProps) {
                         className="w-full btn-primary"
                         disabled={loading}
                     >
-                        {loading ? '...' : t('register')}
+                        {loading ? '...' : t('button.register')}
                     </button>
 
                     <div className="text-center text-sm">
-                        <span className="text-text-muted">{t('hasAccount')} </span>
+                        <span className="text-text-muted">{t('message.hasAccount')} </span>
                         <Link href={`/${locale}/auth/login`} className="text-coral hover:underline">
-                            {t('goToLogin')}
+                            {t('button.goToLogin')}
                         </Link>
                     </div>
                 </form>

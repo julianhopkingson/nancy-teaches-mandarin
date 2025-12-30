@@ -3,20 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 
-// 扩展 NextAuth 类型
-declare module 'next-auth' {
-    interface User {
-        role?: string;
-    }
-    interface Session {
-        user: {
-            id: string;
-            name?: string | null;
-            email?: string | null;
-            role?: string;
-        };
-    }
-}
+
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     secret: process.env.AUTH_SECRET || 'nancy-teaches-mandarin-secret-key-2026',

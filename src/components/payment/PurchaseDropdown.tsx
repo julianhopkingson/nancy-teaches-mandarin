@@ -69,23 +69,23 @@ export function PurchaseDropdown() {
             <div className="flex gap-2 mb-6">
                 <motion.button
                     className={`flex-1 py-2 rounded-xl font-medium transition-colors ${purchaseType === 'level'
-                            ? 'bg-coral text-white'
-                            : 'bg-white/10 hover:bg-white/20'
+                        ? 'bg-coral text-white'
+                        : 'bg-white/10 hover:bg-white/20'
                         }`}
                     onClick={() => setPurchaseType('level')}
                     whileTap={{ scale: 0.98 }}
                 >
-                    {t('selectLevel')}
+                    {t('label.selectLevel')}
                 </motion.button>
                 <motion.button
                     className={`flex-1 py-2 rounded-xl font-medium transition-colors ${purchaseType === 'bundle'
-                            ? 'bg-coral text-white'
-                            : 'bg-white/10 hover:bg-white/20'
+                        ? 'bg-coral text-white'
+                        : 'bg-white/10 hover:bg-white/20'
                         }`}
                     onClick={() => setPurchaseType('bundle')}
                     whileTap={{ scale: 0.98 }}
                 >
-                    {t('selectBundle')}
+                    {t('label.selectBundle')}
                 </motion.button>
             </div>
 
@@ -111,8 +111,8 @@ export function PurchaseDropdown() {
                         <motion.button
                             key={bundle}
                             className={`w-full py-3 px-4 rounded-xl font-medium text-left transition-colors ${selectedBundle === bundle
-                                    ? 'bg-coral text-white'
-                                    : 'bg-white/10 hover:bg-white/20'
+                                ? 'bg-coral text-white'
+                                : 'bg-white/10 hover:bg-white/20'
                                 }`}
                             onClick={() => setSelectedBundle(bundle)}
                             whileTap={{ scale: 0.98 }}
@@ -128,7 +128,7 @@ export function PurchaseDropdown() {
 
             {/* 价格显示 */}
             <div className="text-center py-4 mb-4 bg-white/5 rounded-xl">
-                <span className="text-text-muted">{t('price')}: </span>
+                <span className="text-text-muted">{t('label.price')}: </span>
                 <span className="text-3xl font-bold text-coral">${getAmount()}</span>
             </div>
 
@@ -155,7 +155,7 @@ export function PurchaseDropdown() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >
-                    {t('payNow')}
+                    {t('button.payNow')}
                 </motion.button>
             )}
         </GlassCard>

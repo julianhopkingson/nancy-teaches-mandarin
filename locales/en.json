@@ -1,0 +1,191 @@
+{
+    "nav": {
+        "home": "Home",
+        "hsk": "HSK Courses",
+        "about": "About",
+        "login": "Login",
+        "admin": "Admin",
+        "brandSubtitle": "Teaches Mandarin"
+    },
+    "hero": {
+        "slogan": "Nancy teaches Mandarin with methods that actually work",
+        "subtitle": "From zero to fluent - learn authentic Chinese step by step with Nancy",
+        "cta": "Start Learning",
+        "exploreLevels": "Explore Courses"
+    },
+    "hsk": {
+        "title": "HSK Level Courses",
+        "subtitle": "Choose your level",
+        "level": "Level",
+        "words": "Vocabulary",
+        "description": {
+            "1": "Beginner: Greetings, numbers, time",
+            "2": "Elementary: Shopping, transport, simple conversations",
+            "3": "Intermediate: Work, life, expressing opinions",
+            "4": "Upper-Intermediate: News, culture, in-depth discussions",
+            "5": "Advanced: Literature, professional topics",
+            "6": "Mastery: Idioms, classical texts, advanced writing"
+        },
+        "wordCount": {
+            "1": "150",
+            "2": "300",
+            "3": "600",
+            "4": "1200",
+            "5": "2500",
+            "6": "5000+"
+        },
+        "button": {
+            "startLearning": "Start Learning",
+            "continue": "Continue",
+            "unlockContent": "Unlock Full Content",
+            "backToCourseList": "Back to Course List",
+            "addLesson": "Add New Lesson",
+            "editLesson": "Edit Lesson",
+            "editResults": "Edit Lessons",
+            "editContent": "Edit Content",
+            "finish": "Done",
+            "addContent": "Add Content",
+            "save": "Save",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleteLesson": "Delete Lesson",
+            "confirmDelete": "Are you sure you want to delete this item?",
+            "video": "Video",
+            "audio": "Audio",
+            "document": "Document"
+        },
+        "message": {
+            "locked": "This lesson is locked. Please upgrade to access.",
+            "purchaseRequired": "Full access required",
+            "noLessons": "No lessons available yet.",
+            "deleteLessonConfirm": "Are you sure you want to delete this lesson? This action cannot be undone."
+        },
+        "label": {
+            "lessonTitle": "Lesson Title",
+            "lessonDescription": "Description (Optional)"
+        }
+    },
+    "auth": {
+        "title": {
+            "login": "Login",
+            "register": "Register"
+        },
+        "label": {
+            "username": "Username",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm Password"
+        },
+        "button": {
+            "login": "Login",
+            "register": "Register",
+            "logout": "Logout",
+            "goToRegister": "Sign up",
+            "goToLogin": "Sign in"
+        },
+        "message": {
+            "noAccount": "Don't have an account?",
+            "hasAccount": "Already have an account?",
+            "usernameRequired": "Username is required",
+            "usernameLength": "Username must be 5-10 characters",
+            "usernameTaken": "Username is already taken",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Invalid email format",
+            "emailTaken": "Email is already registered",
+            "passwordRequired": "Password is required",
+            "passwordLength": "Password must be 5-10 characters",
+            "passwordMismatch": "Passwords do not match",
+            "loginFailed": "Invalid username or password",
+            "registerSuccess": "Registration successful",
+            "loginSuccess": "Login successful",
+            "logoutSuccess": "Logged out successfully",
+            "serverError": "Server error, please try again later"
+        }
+    },
+    "payment": {
+        "title": "Purchase Course",
+        "label": {
+            "selectLevel": "Select Level",
+            "selectBundle": "Select Bundle",
+            "price": "Price"
+        },
+        "bundle": {
+            "all": "All Levels (HSK 1-6)",
+            "beginner": "Beginner Pack (HSK 1-2)",
+            "intermediate": "Intermediate Pack (HSK 3-4)",
+            "advanced": "Advanced Pack (HSK 5-6)"
+        },
+        "button": {
+            "payNow": "Pay Now"
+        },
+        "message": {
+            "processing": "Processing..."
+        }
+    },
+    "content": {
+        "label": {
+            "audio": "Audio Materials",
+            "docs": "Documents",
+            "video": "Video Lessons",
+            "duration": "Duration"
+        },
+        "button": {
+            "download": "Download",
+            "play": "Play"
+        }
+    },
+    "comments": {
+        "title": "Comments",
+        "placeholder": "Write your thoughts...",
+        "button": {
+            "submit": "Post Comment"
+        },
+        "message": {
+            "loginToComment": "Login to comment"
+        }
+    },
+    "footer": {
+        "copyright": "© 2026 Nancy Teaches Mandarin",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "brandSubtitle": "Teaches Mandarin"
+    },
+    "common": {
+        "message": {
+            "loading": "Loading...",
+            "error": "Something went wrong"
+        },
+        "button": {
+            "retry": "Retry",
+            "back": "Back",
+            "save": "Save",
+            "cancel": "Cancel",
+            "confirm": "Confirm"
+        }
+    },
+    "profile": {
+        "title": "Profile",
+        "label": {
+            "avatar": "Avatar",
+            "displayName": "Display Name",
+            "currentPassword": "Current Password",
+            "newPassword": "New Password",
+            "confirmNewPassword": "Confirm New Password"
+        },
+        "button": {
+            "uploadAvatar": "Upload Avatar",
+            "changePassword": "Change Password",
+            "saveChanges": "Save Changes"
+        },
+        "message": {
+            "updateSuccess": "Updated successfully",
+            "updateFailed": "Update failed",
+            "passwordChanged": "Password changed",
+            "wrongPassword": "Incorrect current password"
+        }
+    },
+    "legal": {
+        "termsContent": "Nancy Teaches Mandarin provides online Chinese learning courses, including videos, audio, and documents. Our services are available to users worldwide, helping learners systematically study Chinese from HSK 1 to HSK 6.",
+        "privacyContent": "Privacy Policy Content..."
+    }
+}

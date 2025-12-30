@@ -98,12 +98,12 @@ export function CommentSection({ resourceId, isLoggedIn = false, userEmail }: Co
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        {t('submit')}
+                        {t('button.submit')}
                     </motion.button>
                 </form>
             ) : (
                 <div className="mb-6 p-4 rounded-xl bg-white/5 text-center">
-                    <p className="text-text-muted">{t('loginToComment')}</p>
+                    <p className="text-text-muted">{t('message.loginToComment')}</p>
                 </div>
             )}
 

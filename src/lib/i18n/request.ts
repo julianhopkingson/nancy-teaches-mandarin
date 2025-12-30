@@ -14,9 +14,9 @@ export const defaultLocale: Locale = 'sc';
 
 // 消息映射
 const messages: Record<Locale, () => Promise<Record<string, unknown>>> = {
-  sc: () => import('../../../messages/sc.json').then((m) => m.default),
-  tc: () => import('../../../messages/tc.json').then((m) => m.default),
-  en: () => import('../../../messages/en.json').then((m) => m.default),
+  sc: () => import('../../../locales/sc.json').then((m) => m.default),
+  tc: () => import('../../../locales/tc.json').then((m) => m.default),
+  en: () => import('../../../locales/en.json').then((m) => m.default),
 };
 
 export default getRequestConfig(async ({ requestLocale }) => {

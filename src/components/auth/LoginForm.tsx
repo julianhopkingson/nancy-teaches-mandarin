@@ -23,10 +23,10 @@ export function LoginForm({ locale }: LoginFormProps) {
     const [error, setError] = useState<string | null>(null);
 
     const validateForm = (): string | null => {
-        if (!username) return t('usernameRequired');
-        if (username.length < 5 || username.length > 10) return t('usernameLength');
-        if (!password) return t('passwordRequired');
-        if (password.length < 5 || password.length > 10) return t('passwordLength');
+        if (!username) return t('message.usernameRequired');
+        if (username.length < 5 || username.length > 10) return t('message.usernameLength');
+        if (!password) return t('message.passwordRequired');
+        if (password.length < 5 || password.length > 10) return t('message.passwordLength');
         return null;
     };
 
@@ -50,13 +50,13 @@ export function LoginForm({ locale }: LoginFormProps) {
             });
 
             if (result?.error) {
-                setError(t('loginFailed'));
+                setError(t('message.loginFailed'));
             } else {
                 router.push(`/${locale}`);
                 router.refresh();
             }
         } catch (err) {
-            setError(t('serverError'));
+            setError(t('message.serverError'));
         }
         setLoading(false);
     };
@@ -69,7 +69,7 @@ export function LoginForm({ locale }: LoginFormProps) {
                     <div>
                         {/* ... username input ... */}
                         <label className="block text-sm font-medium mb-2">
-                            {t('username')}
+                            {t('label.username')}
                         </label>
                         <input
                             type="text"
@@ -83,7 +83,7 @@ export function LoginForm({ locale }: LoginFormProps) {
 
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            {t('password')}
+                            {t('label.password')}
                         </label>
                         <div className="relative">
                             <input
@@ -122,13 +122,13 @@ export function LoginForm({ locale }: LoginFormProps) {
                         className="w-full btn-primary"
                         disabled={loading}
                     >
-                        {loading ? '...' : t('login')}
+                        {loading ? '...' : t('button.login')}
                     </button>
 
                     <div className="text-center text-sm">
-                        <span className="text-text-muted">{t('noAccount')} </span>
+                        <span className="text-text-muted">{t('message.noAccount')} </span>
                         <Link href={`/${locale}/auth/register`} className="text-coral hover:underline">
-                            {t('goToRegister')}
+                            {t('button.goToRegister')}
                         </Link>
                     </div>
                 </form>

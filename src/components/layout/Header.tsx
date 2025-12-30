@@ -40,7 +40,7 @@ export function Header({ locale }: HeaderProps) {
                             N
                         </div>
                         <span className="font-bold text-lg hidden sm:block">
-                            Nancy <span className="text-coral">教你学汉语</span>
+                            Nancy <span className="text-coral">{t('brandSubtitle')}</span>
                         </span>
                     </Link>
 
@@ -88,7 +88,7 @@ export function Header({ locale }: HeaderProps) {
                                     onClick={handleLogout}
                                     className="btn-secondary text-sm px-4 py-2 hover:scale-105 active:scale-95 transition-transform"
                                 >
-                                    {tAuth('logout')}
+                                    {tAuth('button.logout')}
                                 </button>
                             </div>
                         ) : (
@@ -160,7 +160,7 @@ export function Header({ locale }: HeaderProps) {
                                     }}
                                     className="btn-secondary w-full"
                                 >
-                                    {tAuth('logout')}
+                                    {tAuth('button.logout')}
                                 </button>
                             </>
                         ) : (

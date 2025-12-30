@@ -45,14 +45,14 @@ export function ProfileForm({ locale }: ProfileFormProps) {
             });
 
             if (response.ok) {
-                setMessage({ type: 'success', text: t('updateSuccess') });
+                setMessage({ type: 'success', text: t('message.updateSuccess') });
                 await update();
                 router.refresh();
             } else {
-                setMessage({ type: 'error', text: t('updateFailed') });
+                setMessage({ type: 'error', text: t('message.updateFailed') });
             }
         } catch (error) {
-            setMessage({ type: 'error', text: t('updateFailed') });
+            setMessage({ type: 'error', text: t('message.updateFailed') });
         }
         setLoading(false);
     };
@@ -63,13 +63,13 @@ export function ProfileForm({ locale }: ProfileFormProps) {
         setMessage(null);
 
         if (newPassword !== confirmPassword) {
-            setMessage({ type: 'error', text: tAuth('passwordMismatch') });
+            setMessage({ type: 'error', text: t('message.passwordMismatch') });
             setLoading(false);
             return;
         }
 
         if (newPassword.length < 5 || newPassword.length > 10) {
-            setMessage({ type: 'error', text: tAuth('passwordLength') });
+            setMessage({ type: 'error', text: t('message.passwordLength') });
             setLoading(false);
             return;
         }
@@ -84,19 +84,19 @@ export function ProfileForm({ locale }: ProfileFormProps) {
             const data = await response.json();
 
             if (response.ok) {
-                setMessage({ type: 'success', text: t('passwordChanged') });
+                setMessage({ type: 'success', text: t('message.passwordChanged') });
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
             } else {
                 if (data.error === 'WRONG_PASSWORD') {
-                    setMessage({ type: 'error', text: t('wrongPassword') });
+                    setMessage({ type: 'error', text: t('message.wrongPassword') });
                 } else {
-                    setMessage({ type: 'error', text: t('updateFailed') });
+                    setMessage({ type: 'error', text: t('message.updateFailed') });
                 }
             }
         } catch (error) {
-            setMessage({ type: 'error', text: t('updateFailed') });
+            setMessage({ type: 'error', text: t('message.updateFailed') });
         }
         setLoading(false);
     };
@@ -131,7 +131,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">
-                                {t('displayName')}
+                                {t('label.displayName')}
                             </label>
                             <input
                                 type="text"
@@ -147,18 +147,18 @@ export function ProfileForm({ locale }: ProfileFormProps) {
                             className="btn-primary"
                             disabled={loading}
                         >
-                            {loading ? '...' : t('saveChanges')}
+                            {loading ? '...' : t('button.saveChanges')}
                         </button>
                     </form>
                 </GlassCard>
 
                 {/* Change Password */}
                 <GlassCard className="p-6" heavy hover={false}>
-                    <h2 className="text-xl font-bold mb-4">{t('changePassword')}</h2>
+                    <h2 className="text-xl font-bold mb-4">{t('button.changePassword')}</h2>
                     <form onSubmit={handleChangePassword} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium mb-2">
-                                {t('currentPassword')}
+                                {t('label.currentPassword')}
                             </label>
                             <input
                                 type="password"
@@ -171,7 +171,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">
-                                {t('newPassword')}
+                                {t('label.newPassword')}
                             </label>
                             <div className="relative">
                                 <input
@@ -203,7 +203,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">
-                                {t('confirmNewPassword')}
+                                {t('label.confirmNewPassword')}
                             </label>
                             <div className="relative">
                                 <input
@@ -238,7 +238,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
                             className="btn-secondary"
                             disabled={loading}
                         >
-                            {loading ? '...' : t('changePassword')}
+                            {loading ? '...' : t('button.changePassword')}
                         </button>
                     </form>
                 </GlassCard>
