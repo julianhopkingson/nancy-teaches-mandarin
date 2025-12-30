@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String     @id @default(uuid())
+  username     String     @unique // 5-10 字符
+  email        String     @unique // 必填
+  passwordHash String
+  role         String     @default("student") // student | admin
+  displayName  String?
+  avatar       String?    // 头像 URL
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  purchases    Purchase[]
+  comments     Comment[]
+}
+
+model Purchase {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  productType   String   // 'level' | 'bundle'
+  productId     String   // 'hsk-1', 'bundle-all'
+  amount        Float
+  paypalOrderId String?
+  purchasedAt   DateTime @default(now())
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  resourceId String
+  content    String
+  approved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}

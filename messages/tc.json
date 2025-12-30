@@ -1,0 +1,126 @@
+{
+    "nav": {
+        "home": "首頁",
+        "hsk": "HSK課程",
+        "about": "關於",
+        "login": "登入",
+        "admin": "管理後台"
+    },
+    "hero": {
+        "slogan": "Nancy 教你學漢語，用真正有效的方法",
+        "subtitle": "從零基礎到流利表達，跟著 Nancy 一步步學習地道中文",
+        "cta": "開始學習",
+        "exploreLevels": "探索課程"
+    },
+    "hsk": {
+        "title": "HSK 等級課程",
+        "subtitle": "選擇適合你的等級",
+        "level": "等級",
+        "words": "詞彙量",
+        "description": {
+            "1": "入門基礎：日常問候、數字、時間",
+            "2": "基礎交流：購物、交通、簡單對話",
+            "3": "日常會話：工作、生活、表達觀點",
+            "4": "流利表達：新聞、文化、深入討論",
+            "5": "高級閱讀：文學、專業話題",
+            "6": "精通掌握：成語、古文、高級寫作"
+        },
+        "wordCount": {
+            "1": "150",
+            "2": "300",
+            "3": "600",
+            "4": "1200",
+            "5": "2500",
+            "6": "5000+"
+        },
+        "startLearning": "開始學習",
+        "continue": "繼續學習",
+        "locked": "需要購買"
+    },
+    "auth": {
+        "loginTitle": "登入",
+        "registerTitle": "註冊",
+        "username": "用戶名",
+        "email": "電郵",
+        "password": "密碼",
+        "confirmPassword": "確認密碼",
+        "login": "登入",
+        "register": "註冊",
+        "logout": "登出",
+        "noAccount": "沒有賬號？",
+        "hasAccount": "已有賬號？",
+        "goToRegister": "去註冊",
+        "goToLogin": "去登入",
+        "usernameRequired": "請輸入用戶名",
+        "usernameLength": "用戶名需要5-10個字符",
+        "usernameTaken": "用戶名已被使用",
+        "emailRequired": "請輸入電郵",
+        "emailInvalid": "電郵格式不正確",
+        "emailTaken": "電郵已被註冊",
+        "passwordRequired": "請輸入密碼",
+        "passwordLength": "密碼需要5-10個字符",
+        "passwordMismatch": "兩次密碼不一致",
+        "loginFailed": "用戶名或密碼錯誤",
+        "registerSuccess": "註冊成功",
+        "loginSuccess": "登入成功",
+        "logoutSuccess": "已登出",
+        "serverError": "伺服器錯誤，請稍後重試"
+    },
+    "payment": {
+        "title": "購買課程",
+        "selectLevel": "選擇等級",
+        "selectBundle": "選擇組合",
+        "bundle": {
+            "all": "全部等級 (HSK 1-6)",
+            "beginner": "入門包 (HSK 1-2)",
+            "intermediate": "進階包 (HSK 3-4)",
+            "advanced": "高級包 (HSK 5-6)"
+        },
+        "price": "價格",
+        "payNow": "立即支付",
+        "processing": "處理中..."
+    },
+    "content": {
+        "audio": "音頻材料",
+        "docs": "文檔資料",
+        "video": "影片課程",
+        "download": "下載",
+        "play": "播放",
+        "duration": "時長"
+    },
+    "comments": {
+        "title": "評論區",
+        "placeholder": "寫下你的想法...",
+        "submit": "發表評論",
+        "loginToComment": "登入後發表評論"
+    },
+    "footer": {
+        "copyright": "© 2026 Nancy 教你學漢語",
+        "privacy": "隱私政策",
+        "terms": "使用條款"
+    },
+    "common": {
+        "loading": "載入中...",
+        "error": "出錯了",
+        "retry": "重試",
+        "back": "返回",
+        "save": "儲存",
+        "cancel": "取消",
+        "confirm": "確認"
+    },
+    "profile": {
+        "title": "個人資料",
+        "avatar": "頭像",
+        "uploadAvatar": "上傳頭像",
+        "displayName": "暱稱",
+        "changePassword": "修改密碼",
+        "currentPassword": "當前密碼",
+        "newPassword": "新密碼",
+        "confirmNewPassword": "確認新密碼",
+        "saveChanges": "儲存更改",
+        "updateSuccess": "更新成功",
+        "updateFailed": "更新失敗",
+        "passwordChanged": "密碼已修改",
+        "wrongPassword": "當前密碼錯誤"
+    }
+}

@@ -1,0 +1,126 @@
+{
+  "nav": {
+    "home": "首页",
+    "hsk": "HSK课程",
+    "about": "关于",
+    "login": "登录",
+    "admin": "管理后台"
+  },
+  "hero": {
+    "slogan": "Nancy 教你学汉语，用真正有效的方法",
+    "subtitle": "从零基础到流利表达，跟着 Nancy 一步步学习地道中文",
+    "cta": "开始学习",
+    "exploreLevels": "探索课程"
+  },
+  "hsk": {
+    "title": "HSK 等级课程",
+    "subtitle": "选择适合你的等级",
+    "level": "等级",
+    "words": "词汇量",
+    "description": {
+      "1": "入门基础：日常问候、数字、时间",
+      "2": "基础交流：购物、交通、简单对话",
+      "3": "日常会话：工作、生活、表达观点",
+      "4": "流利表达：新闻、文化、深入讨论",
+      "5": "高级阅读：文学、专业话题",
+      "6": "精通掌握：成语、古文、高级写作"
+    },
+    "wordCount": {
+      "1": "150",
+      "2": "300",
+      "3": "600",
+      "4": "1200",
+      "5": "2500",
+      "6": "5000+"
+    },
+    "startLearning": "开始学习",
+    "continue": "继续学习",
+    "locked": "需要购买"
+  },
+  "auth": {
+    "loginTitle": "登录",
+    "registerTitle": "注册",
+    "username": "用户名",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出登录",
+    "noAccount": "没有账号？",
+    "hasAccount": "已有账号？",
+    "goToRegister": "去注册",
+    "goToLogin": "去登录",
+    "usernameRequired": "请输入用户名",
+    "usernameLength": "用户名需要5-10个字符",
+    "usernameTaken": "用户名已被使用",
+    "emailRequired": "请输入邮箱",
+    "emailInvalid": "邮箱格式不正确",
+    "emailTaken": "邮箱已被注册",
+    "passwordRequired": "请输入密码",
+    "passwordLength": "密码需要5-10个字符",
+    "passwordMismatch": "两次密码不一致",
+    "loginFailed": "用户名或密码错误",
+    "registerSuccess": "注册成功",
+    "loginSuccess": "登录成功",
+    "logoutSuccess": "已退出登录",
+    "serverError": "服务器错误，请稍后重试"
+  },
+  "payment": {
+    "title": "购买课程",
+    "selectLevel": "选择等级",
+    "selectBundle": "选择组合",
+    "bundle": {
+      "all": "全部等级 (HSK 1-6)",
+      "beginner": "入门包 (HSK 1-2)",
+      "intermediate": "进阶包 (HSK 3-4)",
+      "advanced": "高级包 (HSK 5-6)"
+    },
+    "price": "价格",
+    "payNow": "立即支付",
+    "processing": "处理中..."
+  },
+  "content": {
+    "audio": "音频材料",
+    "docs": "文档资料",
+    "video": "视频课程",
+    "download": "下载",
+    "play": "播放",
+    "duration": "时长"
+  },
+  "comments": {
+    "title": "评论区",
+    "placeholder": "写下你的想法...",
+    "submit": "发表评论",
+    "loginToComment": "登录后发表评论"
+  },
+  "footer": {
+    "copyright": "© 2026 Nancy 教你学汉语",
+    "privacy": "隐私政策",
+    "terms": "使用条款"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "出错了",
+    "retry": "重试",
+    "back": "返回",
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确认"
+  },
+  "profile": {
+    "title": "个人资料",
+    "avatar": "头像",
+    "uploadAvatar": "上传头像",
+    "displayName": "昵称",
+    "changePassword": "修改密码",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmNewPassword": "确认新密码",
+    "saveChanges": "保存更改",
+    "updateSuccess": "更新成功",
+    "updateFailed": "更新失败",
+    "passwordChanged": "密码已修改",
+    "wrongPassword": "当前密码错误"
+  }
+}

@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+:root {
+  /* 主题色 - Warm Education */
+  --coral-orange: #FF6B4A;
+  --coral-light: #FF8A6A;
+  --coral-dark: #E55A3A;
+  --ivory-white: #FFFEF5;
+  --ivory-cream: #FFF8E7;
+
+  /* HSK 等级渐变色 */
+  --hsk-1: #4ADE80;
+  /* Green 🍀 */
+  --hsk-2: #22D3EE;
+  /* Cyan */
+  --hsk-3: #60A5FA;
+  /* Blue */
+  --hsk-4: #A78BFA;
+  /* Violet */
+  --hsk-5: #F472B6;
+  /* Pink */
+  --hsk-6: #A855F7;
+  /* Purple 🔮 */
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-blur: 20px;
+  --glass-border: rgba(255, 255, 255, 0.3);
+
+  /* Text */
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #8a8aa0;
+
+  /* Background */
+  --background: var(--ivory-white);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-coral: var(--coral-orange);
+  --color-coral-light: var(--coral-light);
+  --color-coral-dark: var(--coral-dark);
+  --color-ivory: var(--ivory-white);
+  --color-ivory-cream: var(--ivory-cream);
+  --color-hsk-1: var(--hsk-1);
+  --color-hsk-2: var(--hsk-2);
+  --color-hsk-3: var(--hsk-3);
+  --color-hsk-4: var(--hsk-4);
+  --color-hsk-5: var(--hsk-5);
+  --color-hsk-6: var(--hsk-6);
+  --font-sans: 'Inter', 'Noto Sans SC', 'Noto Sans TC', system-ui, sans-serif;
+}
+
+/* Dark mode - 保持温暖感 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1a1a2e;
+    --foreground: #f5f5f5;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-primary: #f5f5f5;
+    --text-secondary: #c5c5d5;
+    --text-muted: #8a8aa0;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', 'Noto Sans SC', 'Noto Sans TC', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* 毛玻璃效果 */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.glass-heavy {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-heavy {
+    background: rgba(26, 26, 46, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* HSK 卡片渐变 */
+.hsk-gradient-1 {
+  background: linear-gradient(135deg, #4ADE80 0%, #22C55E 100%);
+}
+
+.hsk-gradient-2 {
+  background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 100%);
+}
+
+.hsk-gradient-3 {
+  background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+}
+
+.hsk-gradient-4 {
+  background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+}
+
+.hsk-gradient-5 {
+  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+}
+
+.hsk-gradient-6 {
+  background: linear-gradient(135deg, #A855F7 0%, #9333EA 100%);
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--coral-orange) 0%, var(--coral-dark) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 74, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 74, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--coral-orange);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 2px solid var(--coral-orange);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--coral-orange);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* 输入框全局样式 */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select {
+  @apply w-full px-4 py-3 rounded-xl transition-all duration-300;
+  background: transparent;
+  border: 1px solid var(--coral-orange);
+  outline: none;
+  color: var(--text-primary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #4ADE80;
+  /* 淡绿色 hsk-1 */
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+}
+
+
+/* 修复浏览器 Autofill 背景色 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+}
+
+/* 动画 */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 响应式工具 */
+@media (max-width: 768px) {
+
+  .glass,
+  .glass-heavy {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--coral-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--coral-orange);
+}

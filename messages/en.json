@@ -1,0 +1,126 @@
+{
+    "nav": {
+        "home": "Home",
+        "hsk": "HSK Courses",
+        "about": "About",
+        "login": "Login",
+        "admin": "Admin"
+    },
+    "hero": {
+        "slogan": "Nancy teaches Mandarin with methods that actually work",
+        "subtitle": "From zero to fluent - learn authentic Chinese step by step with Nancy",
+        "cta": "Start Learning",
+        "exploreLevels": "Explore Courses"
+    },
+    "hsk": {
+        "title": "HSK Level Courses",
+        "subtitle": "Choose your level",
+        "level": "Level",
+        "words": "Vocabulary",
+        "description": {
+            "1": "Beginner: Greetings, numbers, time",
+            "2": "Elementary: Shopping, transport, simple conversations",
+            "3": "Intermediate: Work, life, expressing opinions",
+            "4": "Upper-Intermediate: News, culture, in-depth discussions",
+            "5": "Advanced: Literature, professional topics",
+            "6": "Mastery: Idioms, classical texts, advanced writing"
+        },
+        "wordCount": {
+            "1": "150",
+            "2": "300",
+            "3": "600",
+            "4": "1200",
+            "5": "2500",
+            "6": "5000+"
+        },
+        "startLearning": "Start Learning",
+        "continue": "Continue",
+        "locked": "Purchase Required"
+    },
+    "auth": {
+        "loginTitle": "Login",
+        "registerTitle": "Register",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?",
+        "goToRegister": "Sign up",
+        "goToLogin": "Sign in",
+        "usernameRequired": "Username is required",
+        "usernameLength": "Username must be 5-10 characters",
+        "usernameTaken": "Username is already taken",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email format",
+        "emailTaken": "Email is already registered",
+        "passwordRequired": "Password is required",
+        "passwordLength": "Password must be 5-10 characters",
+        "passwordMismatch": "Passwords do not match",
+        "loginFailed": "Invalid username or password",
+        "registerSuccess": "Registration successful",
+        "loginSuccess": "Login successful",
+        "logoutSuccess": "Logged out successfully",
+        "serverError": "Server error, please try again later"
+    },
+    "payment": {
+        "title": "Purchase Course",
+        "selectLevel": "Select Level",
+        "selectBundle": "Select Bundle",
+        "bundle": {
+            "all": "All Levels (HSK 1-6)",
+            "beginner": "Beginner Pack (HSK 1-2)",
+            "intermediate": "Intermediate Pack (HSK 3-4)",
+            "advanced": "Advanced Pack (HSK 5-6)"
+        },
+        "price": "Price",
+        "payNow": "Pay Now",
+        "processing": "Processing..."
+    },
+    "content": {
+        "audio": "Audio Materials",
+        "docs": "Documents",
+        "video": "Video Lessons",
+        "download": "Download",
+        "play": "Play",
+        "duration": "Duration"
+    },
+    "comments": {
+        "title": "Comments",
+        "placeholder": "Write your thoughts...",
+        "submit": "Post Comment",
+        "loginToComment": "Login to comment"
+    },
+    "footer": {
+        "copyright": "© 2026 Nancy Teaches Mandarin",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "retry": "Retry",
+        "back": "Back",
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+    },
+    "profile": {
+        "title": "Profile",
+        "avatar": "Avatar",
+        "uploadAvatar": "Upload Avatar",
+        "displayName": "Display Name",
+        "changePassword": "Change Password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm New Password",
+        "saveChanges": "Save Changes",
+        "updateSuccess": "Updated successfully",
+        "updateFailed": "Update failed",
+        "passwordChanged": "Password changed",
+        "wrongPassword": "Incorrect current password"
+    }
+}
