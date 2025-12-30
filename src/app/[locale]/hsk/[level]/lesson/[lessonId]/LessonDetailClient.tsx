@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { CircleIconButton } from '@/components/ui/CircleIconButton';
 import {
     DndContext,
     closestCenter,
@@ -23,13 +24,14 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { LessonContentItem } from '@/components/lesson/LessonContentItem';
 
-import { createLessonContent, deleteLessonContent, reorderLessonContent } from '@/lib/actions/lesson';
+import { createLessonContent, deleteLessonContent, reorderLessonContent, updateLesson, updateLessonContent } from '@/lib/actions/lesson';
 
 // --- Types ---
 interface ContentItem {
     id: string;
     type: string;
     title: string;
+    description?: string;
     url: string | null;
     youtubeId: string | null;
     order: number;
@@ -61,18 +63,20 @@ function SortableItem({ id, children, isEditing }: { id: string; children: React
     };
 
     return (
-        <div ref={setNodeRef} style={style} className="relative group">
+        <div ref={setNodeRef} style={style} className={`relative transition-all ${isEditing ? 'border-2 border-dashed border-coral/30 rounded-2xl p-4 my-2' : 'mb-4'}`}>
             {isEditing && (
                 <div
                     {...attributes}
                     {...listeners}
-                    className="absolute left-[-40px] top-1/2 -translate-y-1/2 p-2 cursor-grab text-gray-400 hover:text-coral active:cursor-grabbing"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 cursor-grab text-gray-400 hover:text-coral active:cursor-grabbing z-20"
                     title="Drag to reorder"
                 >
                     ⋮⋮
                 </div>
             )}
-            {children}
+            <div className={isEditing ? 'pl-6' : ''}>
+                {children}
+            </div>
         </div>
     );
 }
@@ -149,6 +153,7 @@ export function LessonDetailClient({
         setIsSaving(true);
         const formData = new FormData(e.currentTarget);
         const title = formData.get('title') as string;
+        const description = formData.get('description') as string;
         const url = formData.get('url') as string;
         const youtubeId = formData.get('youtubeId') as string;
 
@@ -156,6 +161,7 @@ export function LessonDetailClient({
             lessonId,
             type: addType,
             title,
+            description,
             url: addType !== 'video' ? url : undefined,
             youtubeId: addType === 'video' ? youtubeId : undefined,
             order: contents.length + 1,
@@ -170,21 +176,63 @@ export function LessonDetailClient({
         setIsSaving(false);
     };
 
+    const handleContentUpdate = async (id: string, data: { title?: string; description?: string }) => {
+        // Optimistic update
+        setContents(prev => prev.map(c =>
+            c.id === id ? { ...c, ...data } : c
+        ));
+
+        // Note: passing partial update to server
+        const result = await updateLessonContent(id, data);
+        if (!result.success) {
+            // Revert on failure (could improve by keeping prev state, but simple re-fetch or error toast is tricky here without toast lib)
+            console.error('Failed to update content:', result.error);
+        }
+    };
+
+    const handleLessonUpdate = async (field: 'title' | 'description', value: string) => {
+        // We don't have local state for lesson title/desc prop, so we rely on server revalidation or router refresh.
+        // However, for smooth UX, we might want local state or just trust the blur update.
+        await updateLesson(lessonId, { [field]: value });
+        router.refresh();
+    };
+
     return (
         <div className="max-w-4xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-text-primary mb-2">
-                        {title}
-                    </h1>
-                    {description && (
-                        <p className="text-text-secondary">{description}</p>
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex-1 mr-4">
+                    {isAdmin && isEditing ? (
+                        <div className="space-y-2 mb-4">
+                            <input
+                                key={title} // Reset on title change
+                                defaultValue={title}
+                                onBlur={(e) => handleLessonUpdate('title', e.target.value)}
+                                className="text-2xl font-bold text-text-primary bg-transparent border-2 border-dashed border-coral/30 rounded-lg px-2 py-1 w-full focus:outline-none focus:border-coral"
+                            />
+                            <textarea
+                                key={description}
+                                defaultValue={description || ''}
+                                onBlur={(e) => handleLessonUpdate('description', e.target.value)}
+                                placeholder={tHsk('label.lessonDescription')}
+                                className="w-full text-text-secondary bg-transparent border-2 border-dashed border-coral/30 rounded-lg px-2 py-1 focus:outline-none focus:border-coral resize-none"
+                            />
+                        </div>
+                    ) : (
+                        <>
+                            <h1 className="text-2xl font-bold text-text-primary mb-2">
+                                {title}
+                            </h1>
+                            {description && (
+                                <p className="text-text-secondary max-w-2xl">
+                                    {description}
+                                </p>
+                            )}
+                        </>
                     )}
                 </div>
-
                 {isAdmin && (
-                    <motion.button
+                    <CircleIconButton
                         onClick={() => {
                             const params = new URLSearchParams(searchParams.toString());
                             if (isEditing) {
@@ -194,10 +242,7 @@ export function LessonDetailClient({
                             }
                             router.push(`${pathname}?${params.toString()}`);
                         }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className={`w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center transition-colors active:bg-green-50 ${isEditing ? 'text-green-500' : 'text-text-secondary hover:text-coral'
-                            }`}
+                        isActive={isEditing}
                         title={isEditing ? tHsk('button.finish') : tHsk('button.editLesson')}
                     >
                         {isEditing ? (
@@ -205,7 +250,7 @@ export function LessonDetailClient({
                         ) : (
                             <span className="text-xl">✏️</span>
                         )}
-                    </motion.button>
+                    </CircleIconButton>
                 )}
             </div>
 
@@ -247,18 +292,22 @@ export function LessonDetailClient({
                                 <SortableItem key={content.id} id={content.id} isEditing={isEditing}>
                                     <div className="relative group">
                                         {isAdmin && isEditing && (
-                                            <button
+                                            <CircleIconButton
                                                 onClick={() => handleDelete(content.id)}
-                                                className="absolute top-2 right-2 p-2 text-red-400 hover:bg-red-500/10 rounded-full z-10"
+                                                className="absolute top-2 right-2 z-10 text-red-400 hover:text-red-500 hover:shadow-md"
                                                 title={tHsk('button.delete')}
                                             >
-                                                🗑️
-                                            </button>
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </CircleIconButton>
                                         )}
                                         <LessonContentItem
                                             content={content}
                                             userEmail={userEmail}
                                             isLocked={isLocked}
+                                            isEditing={isEditing}
+                                            onUpdate={handleContentUpdate}
                                         />
                                     </div>
                                 </SortableItem>
@@ -272,23 +321,28 @@ export function LessonDetailClient({
             {showAddModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
-                        <h2 className="text-xl font-bold mb-4 capitalize">{tHsk('button.addContent')} - {addType}</h2>
+                        <h2 className="text-xl font-bold mb-4 capitalize">{tHsk('button.addContent')} - {addType === 'doc' ? tHsk('button.document') : tHsk(`button.${addType}`)}</h2>
                         <form onSubmit={handleAddContent} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Title</label>
-                                <input name="title" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder="Content Title" />
+                                <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.contentTitle')}</label>
+                                <input name="title" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder={tHsk('label.contentTitle')} />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.contentDescription')}</label>
+                                <textarea name="description" className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent resize-none h-20" placeholder={tContent('label.descriptionPlaceholder')} />
                             </div>
 
                             {addType === 'video' && (
                                 <div>
-                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">YouTube ID</label>
+                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.youtubeId')}</label>
                                     <input name="youtubeId" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder="e.g. dQw4w9WgXcQ" />
                                 </div>
                             )}
 
                             {(addType === 'audio' || addType === 'doc') && (
                                 <div>
-                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">URL</label>
+                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.contentUrl')}</label>
                                     <input name="url" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder="https://..." />
                                 </div>
                             )}

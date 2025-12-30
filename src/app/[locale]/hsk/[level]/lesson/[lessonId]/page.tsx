@@ -47,7 +47,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             />
 
             {/* Main Content */}
-            <div className="flex-1 p-8 bg-green-50 dark:bg-[#1a1a2e] bg-fixed">
+            <div className="flex-1 p-4 pt-4 md:p-8 dark:bg-[#1a1a2e] bg-fixed">
                 {/* Client Component for Content & Edit */}
                 <LessonDetailClient
                     lessonId={lesson.id}

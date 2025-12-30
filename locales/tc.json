@@ -38,7 +38,7 @@
             "startLearning": "開始學習",
             "continue": "繼續學習",
             "unlockContent": "解鎖完整內容",
-            "backToCourseList": "返回課程列表",
+            "backToCourseList": "返回",
             "addLesson": "添加新課程",
             "editLesson": "編輯課程",
             "editResults": "編輯課程",
@@ -52,7 +52,7 @@
             "confirmDelete": "確定要刪除這個項目嗎？",
             "video": "視頻",
             "audio": "音頻",
-            "document": "文檔"
+            "document": "文件"
         },
         "message": {
             "locked": "該課程已鎖定，請升級後查看。",
@@ -64,7 +64,11 @@
             "lessonTitle": "課程標題",
             "lessonDescription": "課程描述（可選）",
             "isFree": "免費課程 (所有人可訪問)",
-            "isFreeShort": "免費"
+            "isFreeShort": "免費",
+            "contentTitle": "內容標題",
+            "contentUrl": "鏈接地址",
+            "youtubeId": "YouTube ID",
+            "contentDescription": "說明"
         }
     },
     "auth": {
@@ -129,11 +133,16 @@
             "audio": "音頻材料",
             "docs": "文檔資料",
             "video": "影片課程",
-            "duration": "時長"
+            "duration": "時長",
+            "descriptionPlaceholder": "添加說明..."
         },
         "button": {
             "download": "下載",
-            "play": "播放"
+            "play": "播放",
+            "read": "閱讀"
+        },
+        "message": {
+            "purchaseRequired": "需要購買完整課程才能解鎖"
         }
     },
     "comments": {

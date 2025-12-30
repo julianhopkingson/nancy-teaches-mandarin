@@ -38,7 +38,7 @@
             "startLearning": "Start Learning",
             "continue": "Continue",
             "unlockContent": "Unlock Full Content",
-            "backToCourseList": "Back to Course List",
+            "backToCourseList": "Back",
             "addLesson": "Add New Lesson",
             "editLesson": "Edit Lesson",
             "editResults": "Edit Mode",
@@ -52,7 +52,7 @@
             "confirmDelete": "Are you sure you want to delete this item?",
             "video": "Video",
             "audio": "Audio",
-            "document": "Document"
+            "document": "File"
         },
         "message": {
             "locked": "This lesson is locked. Please upgrade to access.",
@@ -64,7 +64,11 @@
             "lessonTitle": "Lesson Title",
             "lessonDescription": "Description (Optional)",
             "isFree": "Free Lesson (Open to all visitors)",
-            "isFreeShort": "Free"
+            "isFreeShort": "Free",
+            "contentTitle": "Content Title",
+            "contentUrl": "URL",
+            "youtubeId": "YouTube ID",
+            "contentDescription": "Description"
         }
     },
     "auth": {
@@ -129,11 +133,16 @@
             "audio": "Audio Materials",
             "docs": "Documents",
             "video": "Video Lessons",
-            "duration": "Duration"
+            "duration": "Duration",
+            "descriptionPlaceholder": "Add a description..."
         },
         "button": {
             "download": "Download",
-            "play": "Play"
+            "play": "Play",
+            "read": "Read"
+        },
+        "message": {
+            "purchaseRequired": "Full course purchase required to unlock"
         }
     },
     "comments": {

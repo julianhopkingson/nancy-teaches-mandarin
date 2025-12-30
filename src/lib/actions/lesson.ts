@@ -67,6 +67,19 @@ export async function createLesson(data: {
     }
 }
 
+export async function updateLesson(id: string, data: { title?: string; description?: string }) {
+    try {
+        const lesson = await prisma.lesson.update({
+            where: { id },
+            data,
+        });
+        revalidatePath(`/hsk/${lesson.level}`);
+        return { success: true, data: lesson };
+    } catch (error) {
+        return { success: false, error: 'Failed to update lesson' };
+    }
+}
+
 export async function updateLessonStatus(id: string, isFree: boolean) {
     try {
         await prisma.lesson.update({
@@ -86,6 +99,7 @@ export async function createLessonContent(data: {
     lessonId: string;
     type: string;
     title: string;
+    description?: string;
     url?: string | null;
     youtubeId?: string | null;
     order: number;
@@ -105,6 +119,7 @@ export async function updateLessonContent(
     id: string,
     data: {
         title?: string;
+        description?: string;
         url?: string | null;
         youtubeId?: string | null;
     }
@@ -117,6 +132,7 @@ export async function updateLessonContent(
         revalidatePath(`/hsk`); // Revalidate broadly to ensure updates propagate
         return { success: true, data: content };
     } catch (error) {
+        console.error('Update content error:', error);
         return { success: false, error: 'Failed to update content' };
     }
 }

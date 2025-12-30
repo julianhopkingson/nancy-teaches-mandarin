@@ -27,7 +27,6 @@ export function ProtectedVideo({ youtubeId, title, userEmail }: ProtectedVideoPr
     if (!mounted) {
         return (
             <GlassCard className="p-4" hover={false}>
-                <h3 className="font-bold mb-4">{title}</h3>
                 <div className="relative aspect-video rounded-xl overflow-hidden bg-black/20">
                     <div className="w-full h-full flex items-center justify-center">
                         <div className="w-20 h-20 rounded-full bg-coral/50 flex items-center justify-center">
@@ -43,7 +42,6 @@ export function ProtectedVideo({ youtubeId, title, userEmail }: ProtectedVideoPr
 
     return (
         <GlassCard className="p-4" hover={false}>
-            <h3 className="font-bold mb-4">{title}</h3>
 
             <div className="relative aspect-video rounded-xl overflow-hidden bg-black/20">
                 {showVideo ? (

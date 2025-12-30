@@ -61,6 +61,7 @@ model LessonContent {
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   type      String   // 'video', 'audio', 'doc'
   title     String
+  description String? // NEW: Description for the content item
   url       String?  // for doc/audio
   youtubeId String?  // for video
   order     Int      @default(0)

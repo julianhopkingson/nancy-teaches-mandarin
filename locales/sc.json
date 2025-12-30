@@ -38,7 +38,7 @@
       "startLearning": "开始学习",
       "continue": "继续学习",
       "unlockContent": "解锁完整内容",
-      "backToCourseList": "返回课程列表",
+      "backToCourseList": "返回",
       "addLesson": "添加新课程",
       "editLesson": "编辑课程",
       "editResults": "编辑课程",
@@ -52,7 +52,7 @@
       "confirmDelete": "确定要删除这个项目吗？",
       "video": "视频",
       "audio": "音频",
-      "document": "文档"
+      "document": "文件"
     },
     "message": {
       "locked": "该课程已锁定，请升级后查看。",
@@ -64,7 +64,11 @@
       "lessonTitle": "课程标题",
       "lessonDescription": "课程描述（可选）",
       "isFree": "免费课程 (所有人可访问)",
-      "isFreeShort": "免费"
+      "isFreeShort": "免费",
+      "contentTitle": "内容标题",
+      "contentUrl": "链接地址",
+      "youtubeId": "YouTube ID",
+      "contentDescription": "说明"
     }
   },
   "auth": {
@@ -129,11 +133,16 @@
       "audio": "音频材料",
       "docs": "文档资料",
       "video": "视频课程",
-      "duration": "时长"
+      "duration": "时长",
+      "descriptionPlaceholder": "添加说明..."
     },
     "button": {
       "download": "下载",
-      "play": "播放"
+      "play": "播放",
+      "read": "阅读"
+    },
+    "message": {
+      "purchaseRequired": "需要购买完整课程才能解锁"
     }
   },
   "comments": {

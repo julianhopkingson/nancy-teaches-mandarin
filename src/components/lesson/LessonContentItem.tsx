@@ -8,15 +8,53 @@ interface LessonContentItemProps {
         id: string;
         type: string;
         title: string;
+        description?: string;
         url: string | null;
         youtubeId: string | null;
     };
     userEmail?: string;
     isLocked?: boolean;
+    isEditing?: boolean;
+    onUpdate?: (id: string, data: { title?: string; description?: string }) => void;
 }
 
-export function LessonContentItem({ content, userEmail, isLocked = false }: LessonContentItemProps) {
+export function LessonContentItem({ content, userEmail, isLocked = false, isEditing = false, onUpdate }: LessonContentItemProps) {
     const t = useTranslations('content');
+
+    const handleUpdate = (field: 'title' | 'description', value: string) => {
+        if (value !== content[field]) {
+            onUpdate?.(content.id, { [field]: value });
+        }
+    };
+
+    const renderEditableDescription = () => (
+        <div className="mt-3">
+            {isEditing ? (
+                <textarea
+                    defaultValue={content.description || ''}
+                    onBlur={(e) => handleUpdate('description', e.target.value)}
+                    placeholder={t('label.descriptionPlaceholder') || 'Add a description...'}
+                    className="w-full p-2 text-sm border-2 border-dashed border-coral/30 rounded-lg focus:outline-none focus:border-coral bg-transparent resize-none h-20"
+                />
+            ) : content.description && (
+                <p className="text-text-muted text-sm">{content.description}</p>
+            )}
+        </div>
+    );
+
+    const renderEditableTitle = (className: string) => (
+        isEditing ? (
+            <input
+                defaultValue={content.title}
+                onBlur={(e) => handleUpdate('title', e.target.value)}
+                className={`bg-transparent border-b border-dashed border-coral/50 focus:outline-none focus:border-coral w-full ${className}`}
+            />
+        ) : (
+            <h3 className={className}>
+                {content.title}
+            </h3>
+        )
+    );
 
     if (isLocked) {
         return (
@@ -30,15 +68,23 @@ export function LessonContentItem({ content, userEmail, isLocked = false }: Less
 
     if (content.type === 'video' && content.youtubeId) {
         return (
-            <div className="mb-8">
-                <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                    <span className="text-coral">📺</span> {content.title}
-                </h3>
+            <div className="mb-8 p-1">
+                <div className="flex items-center gap-4 mb-4 px-4">
+                    <div className="w-12 h-12 rounded-full bg-coral/20 flex items-center justify-center text-coral text-xl">
+                        📺
+                    </div>
+                    <div className="flex-1">
+                        {renderEditableTitle("text-lg font-bold text-text-primary")}
+                    </div>
+                </div>
                 <ProtectedVideo
                     youtubeId={content.youtubeId}
                     title={content.title}
                     userEmail={userEmail || 'Guest'}
                 />
+                <div className="px-4">
+                    {renderEditableDescription()}
+                </div>
             </div>
         );
     }
@@ -47,17 +93,18 @@ export function LessonContentItem({ content, userEmail, isLocked = false }: Less
         return (
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-4 hover:bg-white/10 transition-colors">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-coral/20 flex items-center justify-center text-coral text-xl">
+                    <div className="w-12 h-12 rounded-full bg-coral/20 flex items-center justify-center text-coral text-xl flex-shrink-0">
                         🎧
                     </div>
-                    <div className="flex-1">
-                        <h3 className="font-bold text-text-primary">{content.title}</h3>
+                    <div className="flex-1 min-w-0">
+                        {renderEditableTitle("font-bold text-text-primary")}
                         <audio controls className="w-full mt-2 h-8">
                             <source src={content.url} type="audio/mpeg" />
                             Your browser does not support the audio element.
                         </audio>
                     </div>
                 </div>
+                {renderEditableDescription()}
             </div>
         );
     }
@@ -65,20 +112,24 @@ export function LessonContentItem({ content, userEmail, isLocked = false }: Less
     if (content.type === 'doc' && content.url) {
         return (
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-4 hover:bg-white/10 transition-colors cursor-pointer group">
-                <a href={content.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform">
-                        📄
-                    </div>
+                <div className="flex items-center gap-4">
+                    <a href={content.url} target="_blank" rel="noopener noreferrer" className="contents">
+                        <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform">
+                            📄
+                        </div>
+                    </a>
                     <div className="flex-1">
-                        <h3 className="font-bold text-text-primary group-hover:text-coral transition-colors">
-                            {content.title}
-                        </h3>
-                        <p className="text-text-muted text-sm">Click to view document</p>
+                        {renderEditableTitle("font-bold text-text-primary group-hover:text-coral transition-colors")}
                     </div>
-                    <div className="text-text-muted">
-                        →
-                    </div>
-                </a>
+                    {!isEditing && (
+                        <a href={content.url} target="_blank" rel="noopener noreferrer">
+                            <div className="px-3 py-1.5 rounded-lg bg-coral/10 text-coral text-sm font-medium group-hover:bg-coral group-hover:text-white transition-colors">
+                                {t('button.read')}
+                            </div>
+                        </a>
+                    )}
+                </div>
+                {renderEditableDescription()}
             </div>
         );
     }
