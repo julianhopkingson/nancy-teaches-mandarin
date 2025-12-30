@@ -24,6 +24,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { LessonContentItem } from '@/components/lesson/LessonContentItem';
 import { DeleteConfirmModal } from '@/components/ui/DeleteConfirmModal';
+import { AlertModal } from '@/components/ui/AlertModal';
 
 import { createLessonContent, deleteLessonContent, reorderLessonContent, updateLesson, updateLessonContent } from '@/lib/actions/lesson';
 
@@ -110,6 +111,18 @@ export function LessonDetailClient({
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
+    // Alert Modal State
+    const [alertModal, setAlertModal] = useState<{
+        isOpen: boolean;
+        type: 'success' | 'error' | 'warning' | 'info';
+        title: string;
+        message: string;
+    }>({ isOpen: false, type: 'error', title: '', message: '' });
+
+    const showAlert = (type: 'success' | 'error' | 'warning' | 'info', title: string, message: string) => {
+        setAlertModal({ isOpen: true, type, title, message });
+    };
+
     // Extract filename without extension
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -183,7 +196,7 @@ export function LessonDetailClient({
             setContents(prev => prev.filter(item => item.id !== deleteTargetId));
             router.refresh();
         } else {
-            alert('Failed to delete content');
+            showAlert('error', '删除失败', '内容删除失败，请重试');
         }
 
         setShowDeleteModal(false);
@@ -209,7 +222,7 @@ export function LessonDetailClient({
         if (addType === 'audio' || addType === 'doc') {
             const file = formData.get('file') as File;
             if (!file || file.size === 0) {
-                alert('Please select a file');
+                showAlert('warning', '请选择文件', '请先选择一个文件再提交');
                 setIsSaving(false);
                 return;
             }
@@ -227,14 +240,14 @@ export function LessonDetailClient({
                 const uploadResult = await uploadRes.json();
 
                 if (!uploadResult.success) {
-                    alert(`Upload failed: ${uploadResult.error}`);
+                    showAlert('error', '上传失败', uploadResult.error || '文件上传失败，请重试');
                     setIsSaving(false);
                     return;
                 }
 
                 url = uploadResult.url;
             } catch (error) {
-                alert('Upload failed');
+                showAlert('error', '上传失败', '网络错误，请检查网络连接后重试');
                 setIsSaving(false);
                 return;
             }
@@ -254,7 +267,7 @@ export function LessonDetailClient({
             setShowAddModal(false);
             router.refresh();
         } else {
-            alert('Failed to create content');
+            showAlert('error', '创建失败', '内容创建失败，请重试');
         }
         setIsSaving(false);
     };
@@ -486,6 +499,15 @@ export function LessonDetailClient({
                 onCancel={handleDeleteCancel}
                 confirmText={tHsk('button.delete')}
                 cancelText={tHsk('button.cancel')}
+            />
+
+            {/* Alert Modal */}
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                type={alertModal.type}
+                title={alertModal.title}
+                message={alertModal.message}
+                onClose={() => setAlertModal(prev => ({ ...prev, isOpen: false }))}
             />
         </div>
     );
