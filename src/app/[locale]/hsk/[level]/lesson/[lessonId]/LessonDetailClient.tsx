@@ -23,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { LessonContentItem } from '@/components/lesson/LessonContentItem';
+import { DeleteConfirmModal } from '@/components/ui/DeleteConfirmModal';
 
 import { createLessonContent, deleteLessonContent, reorderLessonContent, updateLesson, updateLessonContent } from '@/lib/actions/lesson';
 
@@ -105,6 +106,10 @@ export function LessonDetailClient({
     const [addType, setAddType] = useState<'video' | 'audio' | 'doc'>('video');
     const [autoTitle, setAutoTitle] = useState('');  // Auto-filled title from file/YouTube
 
+    // Delete Modal State
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
     // Extract filename without extension
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -165,16 +170,29 @@ export function LessonDetailClient({
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm(tContent('confirmDelete'))) return;
+    const handleDeleteClick = (id: string) => {
+        setDeleteTargetId(id);
+        setShowDeleteModal(true);
+    };
 
-        const result = await deleteLessonContent(id);
+    const handleDeleteConfirm = async () => {
+        if (!deleteTargetId) return;
+
+        const result = await deleteLessonContent(deleteTargetId);
         if (result.success) {
-            setContents(prev => prev.filter(item => item.id !== id));
+            setContents(prev => prev.filter(item => item.id !== deleteTargetId));
             router.refresh();
         } else {
             alert('Failed to delete content');
         }
+
+        setShowDeleteModal(false);
+        setDeleteTargetId(null);
+    };
+
+    const handleDeleteCancel = () => {
+        setShowDeleteModal(false);
+        setDeleteTargetId(null);
     };
 
     const handleAddContent = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -358,7 +376,7 @@ export function LessonDetailClient({
                                     <div className="relative group">
                                         {isAdmin && isEditing && (
                                             <CircleIconButton
-                                                onClick={() => handleDelete(content.id)}
+                                                onClick={() => handleDeleteClick(content.id)}
                                                 className="absolute top-2 right-2 z-10 text-red-400 hover:text-red-500 hover:shadow-md"
                                                 title={tHsk('button.delete')}
                                             >
@@ -458,6 +476,17 @@ export function LessonDetailClient({
                     </div>
                 </div>
             )}
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirmModal
+                isOpen={showDeleteModal}
+                title={tHsk('button.delete')}
+                message={tHsk('button.confirmDelete')}
+                onConfirm={handleDeleteConfirm}
+                onCancel={handleDeleteCancel}
+                confirmText={tHsk('button.delete')}
+                cancelText={tHsk('button.cancel')}
+            />
         </div>
     );
 }
