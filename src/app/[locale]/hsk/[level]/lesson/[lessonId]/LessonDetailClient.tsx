@@ -103,6 +103,35 @@ export function LessonDetailClient({
     // Add Content Modal State
     const [showAddModal, setShowAddModal] = useState(false);
     const [addType, setAddType] = useState<'video' | 'audio' | 'doc'>('video');
+    const [autoTitle, setAutoTitle] = useState('');  // Auto-filled title from file/YouTube
+
+    // Extract filename without extension
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+            setAutoTitle(nameWithoutExt);
+        }
+    };
+
+    // Fetch YouTube title using oEmbed API
+    const handleYoutubeIdBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const videoId = e.target.value.trim();
+        if (!videoId) return;
+
+        try {
+            const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.title) {
+                    setAutoTitle(data.title);
+                }
+            }
+        } catch (error) {
+            // Silently fail - user can still manually enter title
+            console.log('Could not fetch YouTube title');
+        }
+    };
 
     useEffect(() => {
         setContents(initialContents);
@@ -154,22 +183,58 @@ export function LessonDetailClient({
         const formData = new FormData(e.currentTarget);
         const title = formData.get('title') as string;
         const description = formData.get('description') as string;
-        const url = formData.get('url') as string;
         const youtubeId = formData.get('youtubeId') as string;
+
+        let url: string | undefined;
+
+        // Handle file upload for audio/doc
+        if (addType === 'audio' || addType === 'doc') {
+            const file = formData.get('file') as File;
+            if (!file || file.size === 0) {
+                alert('Please select a file');
+                setIsSaving(false);
+                return;
+            }
+
+            // Upload file
+            const uploadData = new FormData();
+            uploadData.append('file', file);
+            uploadData.append('type', addType);
+
+            try {
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: uploadData,
+                });
+                const uploadResult = await uploadRes.json();
+
+                if (!uploadResult.success) {
+                    alert(`Upload failed: ${uploadResult.error}`);
+                    setIsSaving(false);
+                    return;
+                }
+
+                url = uploadResult.url;
+            } catch (error) {
+                alert('Upload failed');
+                setIsSaving(false);
+                return;
+            }
+        }
 
         const result = await createLessonContent({
             lessonId,
             type: addType,
             title,
             description,
-            url: addType !== 'video' ? url : undefined,
+            url,
             youtubeId: addType === 'video' ? youtubeId : undefined,
             order: contents.length + 1,
         });
 
         if (result.success) {
             setShowAddModal(false);
-            router.refresh(); // Refresh to get new data
+            router.refresh();
         } else {
             alert('Failed to create content');
         }
@@ -260,13 +325,13 @@ export function LessonDetailClient({
                     <span className="text-sm font-medium text-text-muted self-center mr-2">
                         {tHsk('button.addContent')}:
                     </span>
-                    <button onClick={() => { setAddType('video'); setShowAddModal(true); }} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-coral/10 text-coral hover:bg-coral/20 transition-colors">
+                    <button onClick={() => { setAddType('video'); setAutoTitle(''); setShowAddModal(true); }} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-coral/10 text-coral hover:bg-coral/20 transition-colors">
                         📺 {tHsk('button.video')}
                     </button>
-                    <button onClick={() => { setAddType('audio'); setShowAddModal(true); }} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-coral/10 text-coral hover:bg-coral/20 transition-colors">
+                    <button onClick={() => { setAddType('audio'); setAutoTitle(''); setShowAddModal(true); }} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-coral/10 text-coral hover:bg-coral/20 transition-colors">
                         🎧 {tHsk('button.audio')}
                     </button>
-                    <button onClick={() => { setAddType('doc'); setShowAddModal(true); }} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-coral/10 text-coral hover:bg-coral/20 transition-colors">
+                    <button onClick={() => { setAddType('doc'); setAutoTitle(''); setShowAddModal(true); }} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-coral/10 text-coral hover:bg-coral/20 transition-colors">
                         📄 {tHsk('button.document')}
                     </button>
                 </div>
@@ -325,7 +390,14 @@ export function LessonDetailClient({
                         <form onSubmit={handleAddContent} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.contentTitle')}</label>
-                                <input name="title" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder={tHsk('label.contentTitle')} />
+                                <input
+                                    name="title"
+                                    required
+                                    value={autoTitle}
+                                    onChange={(e) => setAutoTitle(e.target.value)}
+                                    className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent"
+                                    placeholder={tHsk('label.contentTitle')}
+                                />
                             </div>
 
                             <div>
@@ -336,14 +408,43 @@ export function LessonDetailClient({
                             {addType === 'video' && (
                                 <div>
                                     <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.youtubeId')}</label>
-                                    <input name="youtubeId" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder="e.g. dQw4w9WgXcQ" />
+                                    <input
+                                        name="youtubeId"
+                                        required
+                                        onBlur={handleYoutubeIdBlur}
+                                        className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent"
+                                        placeholder="e.g. dQw4w9WgXcQ"
+                                    />
                                 </div>
                             )}
 
-                            {(addType === 'audio' || addType === 'doc') && (
+                            {addType === 'audio' && (
                                 <div>
-                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.contentUrl')}</label>
-                                    <input name="url" required className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent" placeholder="https://..." />
+                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.selectAudioFile')}</label>
+                                    <input
+                                        name="file"
+                                        type="file"
+                                        accept=".mp3,audio/mpeg"
+                                        required
+                                        onChange={handleFileChange}
+                                        className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-coral/10 file:text-coral hover:file:bg-coral/20"
+                                    />
+                                    <p className="text-xs text-text-muted mt-1">仅支持 MP3 格式</p>
+                                </div>
+                            )}
+
+                            {addType === 'doc' && (
+                                <div>
+                                    <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.selectPdfFile')}</label>
+                                    <input
+                                        name="file"
+                                        type="file"
+                                        accept=".pdf,application/pdf"
+                                        required
+                                        onChange={handleFileChange}
+                                        className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-coral/10 file:text-coral hover:file:bg-coral/20"
+                                    />
+                                    <p className="text-xs text-text-muted mt-1">仅支持 PDF 格式</p>
                                 </div>
                             )}
 

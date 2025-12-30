@@ -68,7 +68,9 @@
             "contentTitle": "Content Title",
             "contentUrl": "URL",
             "youtubeId": "YouTube ID",
-            "contentDescription": "Description"
+            "contentDescription": "Description",
+            "selectAudioFile": "Select Audio File",
+            "selectPdfFile": "Select PDF File"
         }
     },
     "auth": {

@@ -68,7 +68,9 @@
             "contentTitle": "內容標題",
             "contentUrl": "鏈接地址",
             "youtubeId": "YouTube ID",
-            "contentDescription": "說明"
+            "contentDescription": "說明",
+            "selectAudioFile": "選擇音頻文件",
+            "selectPdfFile": "選擇 PDF 文件"
         }
     },
     "auth": {

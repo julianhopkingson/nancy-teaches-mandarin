@@ -1,6 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { ProtectedVideo } from '@/components/content/ProtectedVideo';
 
 interface LessonContentItemProps {
@@ -20,6 +22,10 @@ interface LessonContentItemProps {
 
 export function LessonContentItem({ content, userEmail, isLocked = false, isEditing = false, onUpdate }: LessonContentItemProps) {
     const t = useTranslations('content');
+    const params = useParams();
+    const locale = params.locale as string;
+    const level = params.level as string;
+    const lessonId = params.lessonId as string;
 
     const handleUpdate = (field: 'title' | 'description', value: string) => {
         if (value !== content[field]) {
@@ -47,7 +53,7 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
             <input
                 defaultValue={content.title}
                 onBlur={(e) => handleUpdate('title', e.target.value)}
-                className={`bg-transparent border-b border-dashed border-coral/50 focus:outline-none focus:border-coral w-full ${className}`}
+                className={`bg-transparent border-2 border-dashed border-coral/30 rounded-lg px-2 py-1 focus:outline-none focus:border-coral w-full ${className}`}
             />
         ) : (
             <h3 className={className}>
@@ -110,23 +116,25 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
     }
 
     if (content.type === 'doc' && content.url) {
+        const readUrl = `/${locale}/hsk/${level}/lesson/${lessonId}/read/${content.id}`;
+
         return (
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-4 hover:bg-white/10 transition-colors cursor-pointer group">
                 <div className="flex items-center gap-4">
-                    <a href={content.url} target="_blank" rel="noopener noreferrer" className="contents">
+                    <Link href={readUrl} className="contents">
                         <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform">
                             📄
                         </div>
-                    </a>
+                    </Link>
                     <div className="flex-1">
                         {renderEditableTitle("font-bold text-text-primary group-hover:text-coral transition-colors")}
                     </div>
                     {!isEditing && (
-                        <a href={content.url} target="_blank" rel="noopener noreferrer">
+                        <Link href={readUrl}>
                             <div className="px-3 py-1.5 rounded-lg bg-coral/10 text-coral text-sm font-medium group-hover:bg-coral group-hover:text-white transition-colors">
                                 {t('button.read')}
                             </div>
-                        </a>
+                        </Link>
                     )}
                 </div>
                 {renderEditableDescription()}
