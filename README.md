@@ -8,29 +8,52 @@ Beyond standard lessons, the platform emphasizes a user-centric design with a so
 
 | Category | Technology |
 | :--- | :--- |
-| **Framework** | [Next.js 14](https://nextjs.org/) (App Router) |
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router) |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) |
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **Database** | [SQLite](https://www.sqlite.org/) (via [Prisma](https://www.prisma.io/)) |
 | **Authentication** | [NextAuth.js](https://next-auth.js.org/) (v5) |
 | **Internationalization** | [next-intl](https://next-intl-docs.vercel.app/) |
+| **PDF Rendering** | [react-pdf](https://github.com/wojtekmaj/react-pdf) |
 
 ## ✨ Features
 
-- **HSK Course Curriculum**: Structured learning paths for different HSK levels.
-- **User Authentication**: Secure Login & Registration system.
+### 课程管理 (Course Management)
+- **HSK Course Curriculum**: Structured learning paths for HSK levels 1-6.
+- **Lesson Content Types**:
+  - 🎬 **Video**: YouTube video embedding with protected playback.
+  - 🎧 **Audio**: Local MP3 file upload and in-page playback.
+  - 📄 **Document**: Local PDF file upload with secure in-app reading.
+- **Drag & Drop Reordering**: Admin can reorder lesson content with DnD.
+- **Inline Editing**: Edit titles and descriptions directly in the lesson view.
+
+### 文件上传 (File Upload)
+- **Local File Upload**: Upload MP3 and PDF files directly from local device.
+- **Auto Title Fill**: File name automatically fills the title field (without extension).
+- **YouTube Title Fetch**: Auto-fetch video title from YouTube ID.
+
+### PDF 阅读器 (PDF Reader)
+- **Canvas Rendering**: PDF rendered directly on canvas (no download prompts).
+- **Page Navigation**: Previous/Next page controls.
+- **Zoom Controls**: Zoom in/out functionality.
+- **Security**: Right-click disabled to prevent unauthorized downloads.
+
+### 用户系统 (User System)
+- **User Authentication**: Secure Login & Registration.
 - **User Profile Management**:
   - Update Display Name & Avatar.
   - Change Password with security checks.
-  - Responsive Profile UI.
-- **Multi-language Support**: Seamless switching between English, Simplified Chinese, and Traditional Chinese.
-- **Responsive Design**: Mobile-first approach with a modern, glassmorphism-inspired UI.
-- **Admin Dashboard**: (In Progress) Management interface for content and users.
+- **Role-based Access**: Admin can manage content; students view only.
+
+### 国际化 (Internationalization)
+- **Multi-language Support**: English, Simplified Chinese (简体), Traditional Chinese (繁體).
+- **Seamless Switching**: Language toggle in navigation header.
 
 ## 🎨 Design System
 
-- **Colors**: Pastel palette (Coral, Ivory, Soft Green) for a welcoming learning environment.
-- **UI Components**: Glassmorphism cards, rounded buttons, and smooth transitions.
+- **Colors**: Pastel palette (Coral `#FF6B6B`, Ivory `#FFF8E7`, Background `#fffef5`)
+- **UI Components**: Glassmorphism cards, rounded buttons, smooth transitions.
+- **Mobile-first**: Responsive design optimized for mobile devices.
 
 ## 🛠️ Getting Started
 
@@ -80,16 +103,35 @@ Beyond standard lessons, the platform emphasizes a user-centric design with a so
 
 ```
 src/
-├── app/              # Next.js App Router pages & API routes
-├── components/       # Reusable React components
-│   ├── auth/         # Login/Register forms
-│   ├── hsk/          # HSK specific components
-│   ├── layout/       # Header, Footer, Sidebar
-│   ├── profile/      # User profile components
-│   └── ui/           # Generic UI elements (Buttons, Cards)
-├── lib/              # Utilities (Auth, Prisma, i18n)
-├── types/            # TypeScript type definitions
+├── app/                    # Next.js App Router pages & API routes
+│   ├── api/upload/         # File upload endpoint
+│   └── [locale]/           # Internationalized routes
+├── components/             # Reusable React components
+│   ├── auth/               # Login/Register forms
+│   ├── content/            # PdfViewer, ProtectedVideo, etc.
+│   ├── hsk/                # HSK specific components
+│   ├── layout/             # Header, Footer
+│   ├── lesson/             # LessonContentItem
+│   ├── profile/            # User profile components
+│   └── ui/                 # Generic UI elements (Buttons, Cards)
+├── lib/                    # Utilities (Auth, Prisma, i18n, actions)
 └── ...
-messages/             # i18n translation files (en.json, sc.json, tc.json)
-prisma/               # Database schema and migrations
+locales/                    # i18n translation files (en.json, sc.json, tc.json)
+prisma/                     # Database schema
+public/uploads/             # Uploaded files (audio/, docs/)
 ```
+
+## 📝 API Endpoints
+
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/api/upload` | POST | Upload MP3/PDF files |
+| `/api/auth/*` | - | NextAuth authentication endpoints |
+
+## 🔐 Admin Features
+
+Access admin features by logging in with an admin account (role: `admin`):
+- Add/Edit/Delete lessons
+- Upload content (video, audio, documents)
+- Reorder lesson content via drag & drop
+- Edit lesson titles and descriptions inline

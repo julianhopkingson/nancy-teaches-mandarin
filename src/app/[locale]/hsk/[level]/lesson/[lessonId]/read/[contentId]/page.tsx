@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import Link from 'next/link';
+import { PdfViewer } from '@/components/content/PdfViewer';
 
 interface ReadPageProps {
     params: Promise<{
@@ -15,7 +16,7 @@ interface ReadPageProps {
 
 export default async function ReadPage({ params }: ReadPageProps) {
     const { locale, level, lessonId, contentId } = await params;
-    const t = await getTranslations('content');
+    const tCommon = await getTranslations('common');
 
     const content = await prisma.lessonContent.findUnique({
         where: { id: contentId },
@@ -42,9 +43,9 @@ export default async function ReadPage({ params }: ReadPageProps) {
     }
 
     return (
-        <div className="min-h-screen bg-background-light dark:bg-background-dark">
+        <div className="min-h-screen bg-background-light dark:bg-background-dark pt-24">
             {/* Header */}
-            <div className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b z-10">
+            <div className="bg-[#fffef5] dark:bg-gray-900/80 backdrop-blur-sm border-b">
                 <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
                     <Link
                         href={`/${locale}/hsk/${level}/lesson/${lessonId}`}
@@ -53,7 +54,7 @@ export default async function ReadPage({ params }: ReadPageProps) {
                         <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow">
                             <span className="text-xl">←</span>
                         </div>
-                        <span className="font-medium hidden md:inline">{t('button.back')}</span>
+                        <span className="font-medium hidden md:inline">{tCommon('button.back')}</span>
                     </Link>
 
                     <h1 className="text-lg md:text-xl font-bold truncate flex-1 text-center">
@@ -66,16 +67,7 @@ export default async function ReadPage({ params }: ReadPageProps) {
 
             {/* PDF Viewer */}
             <div className="max-w-5xl mx-auto p-4">
-                <div
-                    className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
-                    onContextMenu={(e) => e.preventDefault()}
-                >
-                    <iframe
-                        src={`${content.url}#toolbar=0&navpanes=0`}
-                        className="w-full h-[80vh] border-0"
-                        title={content.title}
-                    />
-                </div>
+                <PdfViewer url={content.url || ''} title={content.title} />
 
                 <p className="text-center text-text-muted text-sm mt-4">
                     📖 在线阅读模式 | Online Reading Mode
@@ -83,7 +75,7 @@ export default async function ReadPage({ params }: ReadPageProps) {
 
                 {content.description && (
                     <div className="mt-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm">
-                        <h3 className="font-bold mb-2 text-text-primary">{t('label.contentDescription')}</h3>
+                        <h3 className="font-bold mb-2 text-text-primary">说明</h3>
                         <p className="text-text-secondary whitespace-pre-wrap">{content.description}</p>
                     </div>
                 )}
