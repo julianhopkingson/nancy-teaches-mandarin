@@ -62,7 +62,9 @@
     },
     "label": {
       "lessonTitle": "课程标题",
-      "lessonDescription": "课程描述（可选）"
+      "lessonDescription": "课程描述（可选）",
+      "isFree": "免费课程 (所有人可访问)",
+      "isFreeShort": "免费"
     }
   },
   "auth": {

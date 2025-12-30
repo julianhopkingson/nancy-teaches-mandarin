@@ -54,6 +54,7 @@ export async function createLesson(data: {
     description?: string;
     level: number;
     order: number;
+    isFree?: boolean;
 }) {
     try {
         const lesson = await prisma.lesson.create({

@@ -37,10 +37,8 @@ export function Hero({ locale }: HeroProps) {
                 </div>
 
                 {/* Slogan */}
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                    <span className="bg-gradient-to-r from-coral via-hsk-4 to-hsk-6 bg-clip-text text-transparent">
-                        {t('slogan')}
-                    </span>
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-coral">
+                    {t('slogan')}
                 </h1>
 
                 {/* Subtitle */}

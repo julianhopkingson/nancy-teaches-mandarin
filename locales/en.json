@@ -41,9 +41,9 @@
             "backToCourseList": "Back to Course List",
             "addLesson": "Add New Lesson",
             "editLesson": "Edit Lesson",
-            "editResults": "Edit Lessons",
+            "editResults": "Edit Mode",
             "editContent": "Edit Content",
-            "finish": "Done",
+            "finish": "Finish",
             "addContent": "Add Content",
             "save": "Save",
             "cancel": "Cancel",
@@ -62,7 +62,9 @@
         },
         "label": {
             "lessonTitle": "Lesson Title",
-            "lessonDescription": "Description (Optional)"
+            "lessonDescription": "Description (Optional)",
+            "isFree": "Free Lesson (Open to all visitors)",
+            "isFreeShort": "Free"
         }
     },
     "auth": {

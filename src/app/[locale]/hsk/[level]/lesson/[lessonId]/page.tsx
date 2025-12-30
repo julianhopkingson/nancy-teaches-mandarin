@@ -3,7 +3,7 @@ import { getLesson, getLessons } from '@/lib/actions/lesson';
 import { LessonSidebar } from '@/components/lesson/LessonSidebar';
 import { LessonContentItem } from '@/components/lesson/LessonContentItem';
 import { auth } from '@/lib/auth';
-// import { AdminEditControls } from '@/components/admin/AdminEditControls'; // TODO
+import { getHSKLevel } from '@/lib/actions/hsk';
 import { useTranslations } from 'next-intl';
 import { LessonDetailClient } from './LessonDetailClient';
 
@@ -19,10 +19,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
     const { locale, level, lessonId } = await params;
     const levelNum = parseInt(level);
 
-    const [lesson, allLessons, session] = await Promise.all([
+    const [lesson, allLessons, session, hskResult] = await Promise.all([
         getLesson(lessonId),
         getLessons(levelNum),
         auth(),
+        getHSKLevel(levelNum),
     ]);
 
     if (!lesson) notFound();
@@ -42,6 +43,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 level={levelNum}
                 currentLessonId={lessonId}
                 locale={locale}
+                hskData={hskResult.data}
             />
 
             {/* Main Content */}

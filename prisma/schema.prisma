@@ -67,3 +67,15 @@ model LessonContent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model HSKLevel {
+  level          Int      @id // 1-6
+  titleEn        String
+  titleSc        String
+  titleTc        String
+  descriptionEn  String
+  descriptionSc  String
+  descriptionTc  String
+  wordCount      Int
+  updatedAt      DateTime @updatedAt
+}

@@ -13,8 +13,8 @@ export function generateStaticParams() {
 }
 
 import { getLessons } from '@/lib/actions/lesson';
-
 import { auth } from '@/lib/auth';
+import { getHSKLevel } from '@/lib/actions/hsk';
 
 export default async function HSKLevelPage({ params }: { params: Promise<Params> }) {
     const { locale, level } = await params;
@@ -23,12 +23,21 @@ export default async function HSKLevelPage({ params }: { params: Promise<Params>
     const typedLocale = locale as Locale;
     const levelNum = parseInt(level, 10) as 1 | 2 | 3 | 4 | 5 | 6;
 
-    const [session, lessons] = await Promise.all([
+    const [session, lessons, hskResult] = await Promise.all([
         auth(),
         getLessons(levelNum),
+        getHSKLevel(levelNum),
     ]);
 
     const isAdmin = session?.user?.role === 'admin';
 
-    return <HSKDetail level={levelNum} locale={typedLocale} lessons={lessons} isAdmin={isAdmin} />;
+    return (
+        <HSKDetail
+            level={levelNum}
+            locale={typedLocale}
+            lessons={lessons}
+            isAdmin={isAdmin}
+            hskData={hskResult.data}
+        />
+    );
 }

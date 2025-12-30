@@ -11,9 +11,19 @@ interface LessonSidebarProps {
     currentLessonId?: string;
     level: number;
     locale: string;
+    hskData?: {
+        level: number;
+        titleEn: string;
+        titleSc: string;
+        titleTc: string;
+        descriptionEn: string;
+        descriptionSc: string;
+        descriptionTc: string;
+        wordCount: number;
+    } | null;
 }
 
-export function LessonSidebar({ lessons, currentLessonId, level, locale }: LessonSidebarProps) {
+export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData }: LessonSidebarProps) {
     const t = useTranslations('hsk');
 
     return (
@@ -37,8 +47,27 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale }: Lesso
                     </span>
                 </Link>
                 <div className={`p-4 rounded-xl hsk-gradient-${level} text-white shadow-lg`}>
-                    <h2 className="text-xl font-bold">HSK {level}</h2>
-                    <p className="text-sm opacity-90">{t('title')} Curriculum</p>
+                    <div className="flex items-center gap-6 mb-1">
+                        <h2 className="text-lg font-bold">
+                            {hskData ? (
+                                locale === 'en' ? hskData.titleEn :
+                                    locale === 'tc' ? hskData.titleTc :
+                                        hskData.titleSc
+                            ) : `HSK ${level}`}
+                        </h2>
+                        {hskData && (
+                            <span className="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold border border-white/30 whitespace-nowrap">
+                                {hskData.wordCount} {t('words')}
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-xs opacity-90 line-clamp-2">
+                        {hskData ? (
+                            locale === 'en' ? hskData.descriptionEn :
+                                locale === 'tc' ? hskData.descriptionTc :
+                                    hskData.descriptionSc
+                        ) : t('description.' + level)}
+                    </p>
                 </div>
             </div>
 

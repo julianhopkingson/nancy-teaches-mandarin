@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { createLesson, reorderLessons, deleteLesson } from '@/lib/actions/lesson';
+import { createLesson, reorderLessons, deleteLesson, updateLessonStatus } from '@/lib/actions/lesson';
 import type { Locale } from '@/lib/i18n/request';
 
 import {
@@ -36,11 +36,23 @@ interface Lesson {
     };
 }
 
+interface HSKLevelData {
+    level: number;
+    titleEn: string;
+    titleSc: string;
+    titleTc: string;
+    descriptionEn: string;
+    descriptionSc: string;
+    descriptionTc: string;
+    wordCount: number;
+}
+
 interface HSKDetailProps {
     level: 1 | 2 | 3 | 4 | 5 | 6;
     locale: Locale;
     lessons: Lesson[];
     isAdmin?: boolean;
+    hskData?: HSKLevelData | null;
 }
 
 const levelEmojis = ['🍀', '🌊', '🌀', '💜', '🌸', '🔮'];
@@ -76,7 +88,7 @@ function SortableLessonItem({ id, children, isEditing }: { id: string; children:
     );
 }
 
-export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKDetailProps) {
+export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskData }: HSKDetailProps) {
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -136,6 +148,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKD
         const formData = new FormData(e.currentTarget);
         const title = formData.get('title') as string;
         const description = formData.get('description') as string;
+        const isFree = formData.get('isFree') === 'on';
 
         try {
             const result = await createLesson({
@@ -143,6 +156,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKD
                 description,
                 level,
                 order: localLessons.length + 1,
+                isFree,
             });
 
             if (result.success) {
@@ -156,6 +170,24 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKD
             alert('An error occurred');
         }
         setIsSubmitting(false);
+    };
+
+    const handleToggleFree = async (lessonId: string, currentStatus: boolean) => {
+        const newStatus = !currentStatus;
+        // Optimistic update
+        setLocalLessons(prev => prev.map(l => l.id === lessonId ? { ...l, isFree: newStatus } : l));
+
+        try {
+            const result = await updateLessonStatus(lessonId, newStatus);
+            if (!result.success) {
+                // Rollback
+                setLocalLessons(prev => prev.map(l => l.id === lessonId ? { ...l, isFree: currentStatus } : l));
+                alert('Failed to update status');
+            }
+        } catch (error) {
+            setLocalLessons(prev => prev.map(l => l.id === lessonId ? { ...l, isFree: currentStatus } : l));
+            alert('An error occurred');
+        }
     };
 
     const handleDeleteLesson = async () => {
@@ -215,10 +247,28 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKD
                     className={`flex items-center justify-between p-6 rounded-2xl hsk-gradient-${level} text-white mb-8 shadow-lg`}
                 >
                     <div className="flex items-center gap-4">
-                        <span className="text-5xl">{levelEmojis[level - 1]}</span>
                         <div>
-                            <h1 className="text-3xl font-bold">HSK {level}</h1>
-                            <p className="text-white/80">{t('description.' + level)}</p>
+                            <div className="flex items-center gap-6">
+                                <h1 className="text-2xl font-bold">
+                                    {hskData ? (
+                                        locale === 'en' ? hskData.titleEn :
+                                            locale === 'tc' ? hskData.titleTc :
+                                                hskData.titleSc
+                                    ) : `HSK ${level}`}
+                                </h1>
+                                {hskData && (
+                                    <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold border border-white/30 whitespace-nowrap">
+                                        {hskData.wordCount} {t('words')}
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-white/80">
+                                {hskData ? (
+                                    locale === 'en' ? hskData.descriptionEn :
+                                        locale === 'tc' ? hskData.descriptionTc :
+                                            hskData.descriptionSc
+                                ) : t('description.' + level)}
+                            </p>
                         </div>
                     </div>
 
@@ -276,23 +326,40 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKD
                                                                 Lesson {index + 1}
                                                             </span>
                                                             <div className="flex items-center gap-2 pointer-events-auto">
-                                                                {/* Edit Mode: Show Delete Button */}
+                                                                {/* Edit Mode: Show Free Toggle & Delete Button */}
                                                                 {isAdmin && isEditing ? (
-                                                                    <button
-                                                                        onClick={(e) => {
-                                                                            e.preventDefault();
-                                                                            e.stopPropagation();
-                                                                            setLessonToDelete(lesson.id);
-                                                                        }}
-                                                                        className="p-2 rounded-full hover:bg-red-50 text-red-400 hover:text-red-500 transition-colors"
-                                                                        title={t('button.delete')}
-                                                                    >
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                                        </svg>
-                                                                    </button>
+                                                                    <div className="flex items-center gap-4">
+                                                                        <label className="flex items-center gap-2 cursor-pointer group/toggle">
+                                                                            <span className="text-xs font-medium text-text-muted group-hover/toggle:text-coral transition-colors">
+                                                                                {t('label.isFreeShort')}
+                                                                            </span>
+                                                                            <div
+                                                                                onClick={(e) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    handleToggleFree(lesson.id, lesson.isFree);
+                                                                                }}
+                                                                                className={`w-10 h-5 rounded-full relative transition-colors ${lesson.isFree ? 'bg-green-500' : 'bg-gray-200'}`}
+                                                                            >
+                                                                                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-transform ${lesson.isFree ? 'right-1' : 'left-1'}`} />
+                                                                            </div>
+                                                                        </label>
+                                                                        <button
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault();
+                                                                                e.stopPropagation();
+                                                                                setLessonToDelete(lesson.id);
+                                                                            }}
+                                                                            className="p-2 rounded-full hover:bg-red-50 text-red-400 hover:text-red-500 transition-colors"
+                                                                            title={t('button.delete')}
+                                                                        >
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                                            </svg>
+                                                                        </button>
+                                                                    </div>
                                                                 ) : (
-                                                                    /* Standard Mode: Show Lock Icon */
+                                                                    /* Standard Mode: Show Lock Icon only for non-free lessons */
                                                                     !lesson.isFree && (
                                                                         isAdmin ? (
                                                                             <div title="Unlocked">
@@ -416,6 +483,17 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false }: HSKD
                                     rows={3}
                                     className="w-full px-4 py-2 rounded-lg border border-coral bg-transparent dark:text-white focus:ring-2 focus:ring-coral/50 outline-none"
                                 />
+                            </div>
+                            <div className="flex items-center gap-3 py-2">
+                                <input
+                                    type="checkbox"
+                                    name="isFree"
+                                    id="isFree"
+                                    className="w-5 h-5 rounded border-coral text-coral focus:ring-coral/50 cursor-pointer"
+                                />
+                                <label htmlFor="isFree" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                                    {t('label.isFree')}
+                                </label>
                             </div>
                             <div className="flex justify-end gap-3 mt-6">
                                 <button
