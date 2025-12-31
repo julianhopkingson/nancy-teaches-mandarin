@@ -16,7 +16,6 @@ export async function POST(request: Request) {
             where: { id: session.user.id },
             data: {
                 displayName: displayName || null,
-                avatar: avatar || null,
             },
         });
 

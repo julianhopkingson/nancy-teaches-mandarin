@@ -2,138 +2,125 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { PostWithUser } from './types';
+import { PostItem } from './PostItem';
+import { createPost } from '@/actions/comments';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { filterKeywords } from '@/lib/utils/keywordFilter';
-
-interface Comment {
-    id: string;
-    content: string;
-    author: string;
-    createdAt: Date;
-}
 
 interface CommentSectionProps {
-    resourceId: string;
-    isLoggedIn?: boolean;
-    userEmail?: string;
+    lessonId: string;
+    currentUser: any; // User session object
+    posts: PostWithUser[];
+    isEditing?: boolean;
 }
 
-// Mock 评论数据
-const mockComments: Comment[] = [
-    {
-        id: '1',
-        content: '这节课太棒了！学到了很多！',
-        author: 'user1@example.com',
-        createdAt: new Date('2024-01-15'),
-    },
-    {
-        id: '2',
-        content: 'Great lesson! Very helpful!',
-        author: 'user2@example.com',
-        createdAt: new Date('2024-01-16'),
-    },
-];
+export function CommentSection({ lessonId, currentUser, posts, isEditing = false }: CommentSectionProps) {
+    const pathname = usePathname();
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-export function CommentSection({ resourceId, isLoggedIn = false, userEmail }: CommentSectionProps) {
-    const t = useTranslations('comments');
-    const [comments, setComments] = useState<Comment[]>(mockComments);
-    const [newComment, setNewComment] = useState('');
-    const [error, setError] = useState<string | null>(null);
+    // Safety check for isEditing if not passed explicitly (though props are better)
+    const isEditMode = isEditing || searchParams.get('edit') === 'true';
+    const isAdmin = currentUser?.role === 'admin';
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [newPostContent, setNewPostContent] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handlePostSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
 
-        if (!newComment.trim()) return;
-
-        // 关键词过滤
-        const filterResult = filterKeywords(newComment);
-        if (!filterResult.isClean) {
-            setError(`评论包含敏感内容: ${filterResult.flaggedWords.join(', ')} ${filterResult.reason || ''}`);
+        if (!currentUser) {
+            if (confirm('Please sign in to post. Go to login page?')) {
+                router.push('/auth/login');
+            }
             return;
         }
 
-        // 添加评论
-        const comment: Comment = {
-            id: Date.now().toString(),
-            content: newComment,
-            author: userEmail || 'Anonymous',
-            createdAt: new Date(),
-        };
+        if (!newPostContent.trim()) return;
 
-        setComments([comment, ...comments]);
-        setNewComment('');
-    };
-
-    const formatDate = (date: Date) => {
-        return new Intl.DateTimeFormat('zh-CN', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-        }).format(date);
+        setIsSubmitting(true);
+        try {
+            await createPost(lessonId, newPostContent, pathname);
+            setNewPostContent('');
+        } catch (error) {
+            console.error('Failed to create post:', error);
+            alert('Failed to create post');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
-        <GlassCard className="p-6 mt-8" hover={false}>
-            <h2 className="text-xl font-bold mb-6">{t('title')}</h2>
+        <div className="mt-12 max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-6">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-coral to-orange-400 bg-clip-text text-transparent">
+                    Discussion Board
+                </h2>
+                <div className="h-px flex-1 bg-white/10"></div>
+            </div>
 
-            {/* 评论输入 */}
-            {isLoggedIn ? (
-                <form onSubmit={handleSubmit} className="mb-6">
-                    <textarea
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder={t('placeholder')}
-                        className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none resize-none h-24"
-                    />
-
-                    {error && (
-                        <p className="text-red-400 text-sm mt-2">{error}</p>
-                    )}
-
-                    <motion.button
-                        type="submit"
-                        className="mt-3 btn-primary"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        {t('button.submit')}
-                    </motion.button>
-                </form>
-            ) : (
-                <div className="mb-6 p-4 rounded-xl bg-white/5 text-center">
-                    <p className="text-text-muted">{t('message.loginToComment')}</p>
-                </div>
-            )}
-
-            {/* 评论列表 */}
-            <div className="space-y-4">
-                {comments.map((comment) => (
-                    <motion.div
-                        key={comment.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-4 rounded-xl bg-white/5"
-                    >
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">
-                                {comment.author.replace(/(.{3}).*(@.*)/, '$1***$2')}
-                            </span>
-                            <span className="text-text-muted text-xs">
-                                {formatDate(comment.createdAt)}
-                            </span>
+            {/* New Post Input */}
+            <GlassCard className="p-6 mb-8" hover={false}>
+                <form onSubmit={handlePostSubmit}>
+                    <div className="flex gap-4">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                            {currentUser?.avatar ? (
+                                <img src={currentUser.avatar} alt={currentUser.displayName} className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="font-bold text-text-muted">?</span>
+                            )}
                         </div>
-                        <p className="text-text-secondary">{comment.content}</p>
-                    </motion.div>
-                ))}
+                        <div className="flex-1">
+                            <textarea
+                                value={newPostContent}
+                                onChange={(e) => setNewPostContent(e.target.value)}
+                                onClick={() => {
+                                    if (!currentUser) {
+                                        if (confirm('Please sign in to post. Go to login page?')) {
+                                            router.push('/auth/login');
+                                        }
+                                        // Blur to prevent typing
+                                        (document.activeElement as HTMLElement)?.blur();
+                                    }
+                                }}
+                                placeholder={currentUser ? "Share your thoughts or ask a question..." : "Sign in to join the discussion..."}
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-coral focus:outline-none resize-none h-24 mb-3 transition-colors"
+                            />
+                            <div className="flex justify-end">
+                                <motion.button
+                                    type="submit"
+                                    disabled={isSubmitting || !newPostContent.trim() || !currentUser}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="px-6 py-2 rounded-xl bg-coral text-white font-medium hover:bg-coral/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-coral/20"
+                                >
+                                    {isSubmitting ? 'Posting...' : 'Post Comment'}
+                                </motion.button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </GlassCard>
 
-                {comments.length === 0 && (
-                    <p className="text-text-muted text-center py-8">
-                        暂无评论 / No comments yet
-                    </p>
+            {/* Posts Feed */}
+            <div className="space-y-6">
+                {posts.length === 0 ? (
+                    <div className="text-center py-12 text-text-muted bg-white/5 rounded-2xl border border-white/5">
+                        <p>No discussion yet. Be the first to post!</p>
+                    </div>
+                ) : (
+                    posts.map(post => (
+                        <PostItem
+                            key={post.id}
+                            post={post}
+                            currentUser={currentUser}
+                            isAdmin={isAdmin}
+                            isEditing={isEditMode}
+                        />
+                    ))
                 )}
             </div>
-        </GlassCard>
+        </div>
     );
 }

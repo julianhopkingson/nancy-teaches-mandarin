@@ -191,10 +191,15 @@
             "newPassword": "New Password",
             "confirmNewPassword": "Confirm New Password"
         },
+        "modal": {
+            "editAvatar": "Edit Avatar"
+        },
         "button": {
             "uploadAvatar": "Upload Avatar",
             "changePassword": "Change Password",
-            "saveChanges": "Save Changes"
+            "saveChanges": "Save Changes",
+            "cancel": "Cancel",
+            "saveAvatar": "Save Avatar"
         },
         "message": {
             "updateSuccess": "Updated successfully",

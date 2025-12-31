@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -28,9 +28,24 @@ interface LessonSidebarProps {
 export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData }: LessonSidebarProps) {
     const t = useTranslations('hsk');
     const [isOpen, setIsOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        // Initial check
+        checkMobile();
+
+        // Listener
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const currentLessonIndex = lessons.findIndex(l => l.id === currentLessonId);
     const currentLesson = lessons[currentLessonIndex];
+    const showSidebar = !isMobile || isOpen;
 
     return (
         <div className="w-full md:w-80 flex-shrink-0 bg-white/5 border-r border-white/10 p-4 md:min-h-screen">
@@ -113,9 +128,9 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
             </div>
 
             <AnimatePresence>
-                {(isOpen || typeof window !== 'undefined' && window.innerWidth >= 768) && (
+                {showSidebar && (
                     <motion.div
-                        initial={typeof window !== 'undefined' && window.innerWidth < 768 ? { height: 0, opacity: 0 } : false}
+                        initial={isMobile ? { height: 0, opacity: 0 } : false}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -125,7 +140,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
                             {lessons.map((lesson, index) => {
                                 const isActive = lesson.id === currentLessonId;
                                 // In mobile expanded view, hide the active lesson because it's already in the header
-                                if (isActive && typeof window !== 'undefined' && window.innerWidth < 768) return null;
+                                if (isActive && isMobile) return null;
 
                                 return (
                                     <Link key={lesson.id} href={`/${locale}/hsk/${level}/lesson/${lesson.id}`} onClick={() => setIsOpen(false)}>

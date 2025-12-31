@@ -25,6 +25,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { LessonContentItem } from '@/components/lesson/LessonContentItem';
 import { DeleteConfirmModal } from '@/components/ui/DeleteConfirmModal';
 import { AlertModal } from '@/components/ui/AlertModal';
+import { CommentSection } from '@/components/comments/CommentSection';
+import { PostWithUser } from '@/components/comments/types';
 
 import { createLessonContent, deleteLessonContent, reorderLessonContent, updateLesson, updateLessonContent, updateLessonContentFile } from '@/lib/actions/lesson';
 
@@ -48,6 +50,8 @@ interface LessonDetailClientProps {
     userEmail?: string;
     title: string;
     description: string | null;
+    initialPosts: PostWithUser[];
+    currentUser: any;
 }
 
 // --- Sortable Item Wrapper ---
@@ -92,6 +96,8 @@ export function LessonDetailClient({
     userEmail,
     title,
     description,
+    initialPosts,
+    currentUser,
 }: LessonDetailClientProps) {
     const tContent = useTranslations('content'); // Ensure 'content' namespace has needed keys
     const tHsk = useTranslations('hsk');
@@ -664,6 +670,16 @@ export function LessonDetailClient({
                 confirmText={tHsk('label.confirmOverwrite')}
                 cancelText={tHsk('button.cancel')}
             />
+
+            {/* Comment Section */}
+            {!isLocked && (
+                <CommentSection
+                    lessonId={lessonId}
+                    currentUser={currentUser}
+                    posts={initialPosts}
+                    isEditing={isEditing}
+                />
+            )}
         </div>
     );
 }

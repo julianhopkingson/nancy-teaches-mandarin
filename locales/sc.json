@@ -191,10 +191,15 @@
       "newPassword": "新密码",
       "confirmNewPassword": "确认新密码"
     },
+    "modal": {
+      "editAvatar": "编辑头像"
+    },
     "button": {
       "uploadAvatar": "上传头像",
       "changePassword": "修改密码",
-      "saveChanges": "保存更改"
+      "saveChanges": "保存更改",
+      "cancel": "取消",
+      "saveAvatar": "保存头像"
     },
     "message": {
       "updateSuccess": "更新成功",

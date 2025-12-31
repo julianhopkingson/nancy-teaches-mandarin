@@ -4,6 +4,7 @@ import { LessonSidebar } from '@/components/lesson/LessonSidebar';
 import { LessonContentItem } from '@/components/lesson/LessonContentItem';
 import { auth } from '@/lib/auth';
 import { getHSKLevel } from '@/lib/actions/hsk';
+import { getPosts } from '@/actions/comments';
 import { useTranslations } from 'next-intl';
 import { LessonDetailClient } from './LessonDetailClient';
 
@@ -19,11 +20,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
     const { locale, level, lessonId } = await params;
     const levelNum = parseInt(level);
 
-    const [lesson, allLessons, session, hskResult] = await Promise.all([
+    const [lesson, allLessons, session, hskResult, posts] = await Promise.all([
         getLesson(lessonId),
         getLessons(levelNum),
         auth(),
         getHSKLevel(levelNum),
+        getPosts(lessonId),
     ]);
 
     if (!lesson) notFound();
@@ -57,6 +59,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
                     userEmail={session?.user?.email || undefined}
                     title={lesson.title}
                     description={lesson.description}
+                    initialPosts={posts}
+                    currentUser={session?.user}
                 />
             </div>
         </div>

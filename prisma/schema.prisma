@@ -18,7 +18,10 @@ model User {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   purchases    Purchase[]
+  posts        Post[]
   comments     Comment[]
+  postLikes    PostLike[]
+  commentLikes CommentLike[]
 }
 
 model Purchase {
@@ -32,14 +35,52 @@ model Purchase {
   purchasedAt   DateTime @default(now())
 }
 
+
+model Post {
+  id        String    @id @default(uuid())
+  content   String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  lessonId  String
+  lesson    Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+  likes     PostLike[]
+}
+
 model Comment {
-  id         String   @id @default(uuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  resourceId String
-  content    String
-  approved   Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id        String       @id @default(uuid())
+  content   String
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  likes     CommentLike[]
+}
+
+model PostLike {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+}
+
+model CommentLike {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, commentId])
 }
 
 model Lesson {
@@ -53,6 +94,7 @@ model Lesson {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   contents    LessonContent[]
+  posts       Post[]
 }
 
 model LessonContent {

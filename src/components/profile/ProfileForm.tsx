@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { GlassCard } from '@/components/ui/GlassCard';
 import type { Locale } from '@/lib/i18n/request';
+import { AvatarUploadModal } from './AvatarUploadModal';
+import { uploadAvatar } from '@/actions/profile';
 
 interface ProfileFormProps {
     locale: Locale;
@@ -26,6 +28,12 @@ export function ProfileForm({ locale }: ProfileFormProps) {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+    // Avatar State
+    const [showAvatarModal, setShowAvatarModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [originalFilename, setOriginalFilename] = useState<string>('avatar.jpg');
+
+    // Refresh display name on session update
     useEffect(() => {
         if (session?.user?.name) {
             setDisplayName(session.user.name);
@@ -46,7 +54,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
 
             if (response.ok) {
                 setMessage({ type: 'success', text: t('message.updateSuccess') });
-                await update();
+                await update({ displayName });
                 router.refresh();
             } else {
                 setMessage({ type: 'error', text: t('message.updateFailed') });
@@ -101,6 +109,55 @@ export function ProfileForm({ locale }: ProfileFormProps) {
         setLoading(false);
     };
 
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+
+            // Size validation (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size exceeds 2MB limit. (文件大小超过2MB限制)');
+                e.target.value = ''; // Reset input
+                return;
+            }
+
+            setOriginalFilename(file.name);
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                setSelectedImage(reader.result?.toString() || null);
+                setShowAvatarModal(true);
+            });
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSaveAvatar = async (file: File) => {
+        try {
+            const formData = new FormData();
+            // Append file with original name (or what canvasUtils gave us, but we prefer original name stem)
+            // canvasUtils gives 'avatar.jpg', we want to try to keep extension or just use original name
+            // But 'file' from canvasUtils is a blob with 'avatar.jpg' name.
+            // We can rename it in FormData.
+            formData.append('file', file, originalFilename);
+
+            const result = await uploadAvatar(formData);
+
+            setMessage({ type: 'success', text: t('message.updateSuccess') });
+            // Close modal
+            setShowAvatarModal(false);
+            setSelectedImage(null);
+            // Refresh session/page
+            if (result.url) {
+                await update({ avatar: result.url });
+            } else {
+                await update();
+            }
+            router.refresh();
+        } catch (error) {
+            console.error(error);
+            setMessage({ type: 'error', text: t('message.updateFailed') });
+        }
+    };
+
     if (!session?.user) {
         return null;
     }
@@ -120,8 +177,30 @@ export function ProfileForm({ locale }: ProfileFormProps) {
                 <GlassCard className="p-6" heavy hover={false}>
                     <form onSubmit={handleUpdateProfile} className="space-y-4">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-20 h-20 rounded-full bg-coral/20 flex items-center justify-center text-coral font-bold text-3xl">
-                                {(session.user.name || session.user.email || 'U')[0].toUpperCase()}
+                            <div className="relative group cursor-pointer" onClick={() => document.getElementById('avatar-input')?.click()}>
+                                <input
+                                    type="file"
+                                    id="avatar-input"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleFileSelect}
+                                />
+                                {session.user.image ? (
+                                    <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-transparent group-hover:border-coral transition-colors">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={session.user.image} alt="Avatar" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <div className="w-20 h-20 rounded-full bg-coral/20 flex items-center justify-center text-coral font-bold text-3xl border-2 border-transparent group-hover:border-coral transition-colors">
+                                        {(session.user.name || session.user.email || 'U')[0].toUpperCase()}
+                                    </div>
+                                )}
+                                <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
                             </div>
                             <div>
                                 <p className="font-medium text-lg">{session.user.name || session.user.email}</p>
@@ -243,6 +322,17 @@ export function ProfileForm({ locale }: ProfileFormProps) {
                     </form>
                 </GlassCard>
             </div>
+
+            {showAvatarModal && selectedImage && (
+                <AvatarUploadModal
+                    imageSrc={selectedImage}
+                    onClose={() => {
+                        setShowAvatarModal(false);
+                        setSelectedImage(null);
+                    }}
+                    onSave={handleSaveAvatar}
+                />
+            )}
         </div>
     );
 }

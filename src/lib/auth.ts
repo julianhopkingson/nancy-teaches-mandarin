@@ -52,9 +52,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.id = user.id;
                 token.role = user.role;
             }
+
+            // Force fetch avatar from DB to ensure sync
+            // This fixes issues where session update might be missed or token is stale
+            if (token.id) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: token.id as string },
+                    select: { avatar: true, displayName: true }
+                });
+                if (dbUser) {
+                    token.picture = dbUser.avatar;
+                    token.name = dbUser.displayName || token.name;
+                }
+            }
+
             if (trigger === 'update' && session) {
-                token.name = session.displayName;
-                token.picture = session.avatar;
+                if (session.displayName) {
+                    token.name = session.displayName;
+                }
+                if (session.avatar) {
+                    token.picture = session.avatar;
+                }
             }
             return token;
         },
@@ -62,6 +80,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (session.user) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
+                session.user.image = token.picture as string | null | undefined;
             }
             return session;
         },
