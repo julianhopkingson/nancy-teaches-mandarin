@@ -25,6 +25,9 @@ export async function POST(request: NextRequest) {
 
         const config = ALLOWED_TYPES[type];
         const ext = path.extname(file.name).toLowerCase();
+        const baseName = path.basename(file.name, ext);
+        // Sanitize filename: remove special chars, keep alphanumeric, Chinese, spaces, hyphens
+        const sanitizedName = baseName.replace(/[^\w\u4e00-\u9fff\s-]/g, '').trim().replace(/\s+/g, '_');
 
         if (!config.extensions.includes(ext)) {
             return NextResponse.json(
@@ -33,8 +36,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Generate unique filename
-        const filename = `${uuidv4()}${ext}`;
+        // Generate unique filename: uuid-originalname.ext
+        const filename = `${uuidv4()}-${sanitizedName}${ext}`;
         const uploadDir = path.join(process.cwd(), 'public', 'uploads', config.folder);
 
         // Ensure directory exists

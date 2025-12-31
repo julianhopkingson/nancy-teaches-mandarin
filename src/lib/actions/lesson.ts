@@ -139,12 +139,34 @@ export async function updateLessonContent(
 
 export async function deleteLessonContent(id: string) {
     try {
+        // First, get the content to find the file URL
+        const content = await prisma.lessonContent.findUnique({
+            where: { id },
+            select: { url: true, type: true }
+        });
+
+        // Delete physical file if it exists
+        if (content?.url && (content.type === 'audio' || content.type === 'doc')) {
+            const fs = await import('fs/promises');
+            const path = await import('path');
+            const filePath = path.join(process.cwd(), 'public', content.url);
+            try {
+                await fs.unlink(filePath);
+                console.log(`Deleted file: ${filePath}`);
+            } catch (fileError) {
+                console.warn(`Could not delete file: ${filePath}`, fileError);
+                // Continue with DB deletion even if file deletion fails
+            }
+        }
+
+        // Delete from database
         await prisma.lessonContent.delete({
             where: { id },
         });
         revalidatePath(`/hsk`);
         return { success: true };
     } catch (error) {
+        console.error('Delete content error:', error);
         return { success: false, error: 'Failed to delete content' };
     }
 }

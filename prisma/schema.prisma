@@ -56,17 +56,18 @@ model Lesson {
 }
 
 model LessonContent {
-  id        String   @id @default(uuid())
-  lessonId  String
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  type      String   // 'video', 'audio', 'doc'
-  title     String
-  description String? // NEW: Description for the content item
-  url       String?  // for doc/audio
-  youtubeId String?  // for video
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  lessonId     String
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  type         String   // 'video', 'audio', 'doc'
+  title        String
+  description  String?  // Description for the content item
+  url          String?  // for doc/audio
+  originalName String?  // Original filename before upload
+  youtubeId    String?  // for video
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model HSKLevel {
