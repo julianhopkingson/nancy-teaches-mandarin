@@ -71,6 +71,7 @@
             "youtubeId": "YouTube ID",
             "contentDescription": "Description",
             "selectAudioFile": "Select Audio File",
+            "audioFormats": "Supports MP3, M4A formats",
             "selectPdfFile": "Select PDF File"
         }
     },

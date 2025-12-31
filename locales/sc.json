@@ -71,6 +71,7 @@
       "youtubeId": "YouTube ID",
       "contentDescription": "说明",
       "selectAudioFile": "选择音频文件",
+      "audioFormats": "支持 MP3、M4A 格式",
       "selectPdfFile": "选择 PDF 文件"
     }
   },

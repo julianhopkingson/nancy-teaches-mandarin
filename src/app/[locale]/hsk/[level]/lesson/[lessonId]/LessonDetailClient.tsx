@@ -455,12 +455,12 @@ export function LessonDetailClient({
                                     <input
                                         name="file"
                                         type="file"
-                                        accept=".mp3,audio/mpeg"
+                                        accept=".mp3,.m4a,audio/mpeg,audio/mp4"
                                         required
                                         onChange={handleFileChange}
                                         className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-coral/10 file:text-coral hover:file:bg-coral/20"
                                     />
-                                    <p className="text-xs text-text-muted mt-1">仅支持 MP3 格式</p>
+                                    <p className="text-xs text-text-muted mt-1">{tHsk('label.audioFormats')}</p>
                                 </div>
                             )}
 

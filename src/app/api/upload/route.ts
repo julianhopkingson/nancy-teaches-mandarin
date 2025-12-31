@@ -5,7 +5,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 const ALLOWED_TYPES: Record<string, { extensions: string[]; folder: string }> = {
-    audio: { extensions: ['.mp3'], folder: 'audio' },
+    audio: { extensions: ['.mp3', '.m4a'], folder: 'audio' },
     doc: { extensions: ['.pdf'], folder: 'docs' },
 };
 

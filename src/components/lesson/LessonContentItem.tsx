@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ProtectedVideo } from '@/components/content/ProtectedVideo';
+import { AudioPlayer } from '@/components/ui/AudioPlayer';
 
 interface LessonContentItemProps {
     content: {
@@ -104,10 +105,7 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
                     </div>
                     <div className="flex-1 min-w-0">
                         {renderEditableTitle("font-bold text-text-primary")}
-                        <audio controls className="w-full mt-2 h-8">
-                            <source src={content.url} type="audio/mpeg" />
-                            Your browser does not support the audio element.
-                        </audio>
+                        <AudioPlayer src={content.url} />
                     </div>
                 </div>
                 {renderEditableDescription()}
