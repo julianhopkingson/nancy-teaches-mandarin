@@ -86,14 +86,17 @@ export function Header({ locale }: HeaderProps) {
                                 </Link>
                                 <button
                                     onClick={handleLogout}
-                                    className="btn-secondary text-sm px-4 py-2 hover:scale-105 active:scale-95 transition-transform"
+                                    className="btn-secondary text-sm px-4 py-2 hover:scale-105 active:scale-95 transition-transform w-[140px] flex items-center justify-center gap-2"
                                 >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
                                     {tAuth('button.logout')}
                                 </button>
                             </div>
                         ) : (
                             <Link href={`/${locale}/auth/login`}>
-                                <button className="btn-primary hidden sm:block hover:scale-105 active:scale-95 transition-transform">
+                                <button className="btn-primary hidden sm:block hover:scale-105 active:scale-95 transition-transform w-[140px]">
                                     {t('login')}
                                 </button>
                             </Link>
@@ -158,8 +161,11 @@ export function Header({ locale }: HeaderProps) {
                                         handleLogout();
                                         setIsMobileMenuOpen(false);
                                     }}
-                                    className="btn-secondary w-full"
+                                    className="btn-secondary w-full flex items-center justify-center gap-2"
                                 >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
                                     {tAuth('button.logout')}
                                 </button>
                             </>

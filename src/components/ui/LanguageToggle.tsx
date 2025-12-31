@@ -13,7 +13,7 @@ export function LanguageToggle({ currentLocale }: { currentLocale: Locale }) {
         segments[1] = newLocale;
         const queryString = searchParams.toString();
         const newPath = segments.join('/') + (queryString ? `?${queryString}` : '');
-        router.push(newPath);
+        router.replace(newPath, { scroll: false });
     };
 
     return (

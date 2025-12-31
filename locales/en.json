@@ -3,7 +3,7 @@
         "home": "Home",
         "hsk": "HSK Courses",
         "about": "About",
-        "login": "Login",
+        "login": "Sign in",
         "admin": "Admin",
         "brandSubtitle": "Teaches Mandarin"
     },
@@ -76,7 +76,7 @@
     },
     "auth": {
         "title": {
-            "login": "Login",
+            "login": "Sign in",
             "register": "Register"
         },
         "label": {
@@ -86,9 +86,9 @@
             "confirmPassword": "Confirm Password"
         },
         "button": {
-            "login": "Login",
+            "login": "Sign in",
             "register": "Register",
-            "logout": "Logout",
+            "logout": "Sign out",
             "goToRegister": "Sign up",
             "goToLogin": "Sign in"
         },
@@ -106,7 +106,7 @@
             "passwordMismatch": "Passwords do not match",
             "loginFailed": "Invalid username or password",
             "registerSuccess": "Registration successful",
-            "loginSuccess": "Login successful",
+            "loginSuccess": "Signed in successfully",
             "logoutSuccess": "Logged out successfully",
             "serverError": "Server error, please try again later"
         }
@@ -155,7 +155,7 @@
             "submit": "Post Comment"
         },
         "message": {
-            "loginToComment": "Login to comment"
+            "loginToComment": "Sign in to comment"
         }
     },
     "footer": {
