@@ -16,6 +16,7 @@ interface HSKLevelData {
     descriptionSc: string;
     descriptionTc: string;
     wordCount: number;
+    lessonCount: number;
 }
 
 interface HSKListProps {

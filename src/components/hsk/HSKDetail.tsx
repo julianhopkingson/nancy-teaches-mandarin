@@ -249,7 +249,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                 >
                     <div className="flex items-center gap-4">
                         <div>
-                            <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-3">
                                 <h1 className="text-2xl font-bold">
                                     {hskData ? (
                                         locale === 'en' ? hskData.titleEn :
@@ -262,6 +262,9 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                                         {hskData.wordCount} {t('words')}
                                     </span>
                                 )}
+                                <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold border border-white/30 whitespace-nowrap">
+                                    {localLessons.length} {t('lessons')}
+                                </span>
                             </div>
                             <p className="text-white/80">
                                 {hskData ? (

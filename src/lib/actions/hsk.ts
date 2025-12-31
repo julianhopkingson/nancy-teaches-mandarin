@@ -5,10 +5,23 @@ import { revalidatePath } from 'next/cache';
 
 export async function getHSKLevels() {
     try {
-        const levels = await prisma.hSKLevel.findMany({
-            orderBy: { level: 'asc' },
-        });
-        return { success: true, data: levels };
+        const [levels, lessonCounts] = await Promise.all([
+            prisma.hSKLevel.findMany({
+                orderBy: { level: 'asc' },
+            }),
+            prisma.lesson.groupBy({
+                by: ['level'],
+                _count: { id: true }
+            })
+        ]);
+
+        // Merge lesson counts into levels
+        const levelsWithCounts = levels.map(level => ({
+            ...level,
+            lessonCount: lessonCounts.find(lc => lc.level === level.level)?._count.id || 0
+        }));
+
+        return { success: true, data: levelsWithCounts };
     } catch (error) {
         console.error('Failed to fetch HSK levels:', error);
         return { success: false, error: 'Failed to fetch HSK levels' };

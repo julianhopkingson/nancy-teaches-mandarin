@@ -18,6 +18,7 @@
         "subtitle": "Choose your level",
         "level": "Level",
         "words": "Vocabulary",
+        "lessons": "Lessons",
         "description": {
             "1": "Beginner: Greetings, numbers, time",
             "2": "Elementary: Shopping, transport, simple conversations",

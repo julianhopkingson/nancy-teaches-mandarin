@@ -75,7 +75,7 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
     if (content.type === 'video' && content.youtubeId) {
         return (
             <div className="mb-8 p-1">
-                <div className="flex items-center gap-4 mb-4 px-4">
+                <div className="flex items-center gap-4 mb-2 px-4">
                     <div className="w-12 h-12 rounded-full bg-coral/20 flex items-center justify-center text-coral text-xl">
                         📺
                     </div>

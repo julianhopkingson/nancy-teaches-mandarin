@@ -26,7 +26,7 @@ export function ProtectedVideo({ youtubeId, title, userEmail }: ProtectedVideoPr
     // 服务端和客户端初始渲染保持一致
     if (!mounted) {
         return (
-            <GlassCard className="p-4" hover={false}>
+            <GlassCard className="p-1" hover={false}>
                 <div className="relative aspect-video rounded-xl overflow-hidden bg-black/20">
                     <div className="w-full h-full flex items-center justify-center">
                         <div className="w-20 h-20 rounded-full bg-coral/50 flex items-center justify-center">
@@ -41,7 +41,7 @@ export function ProtectedVideo({ youtubeId, title, userEmail }: ProtectedVideoPr
     }
 
     return (
-        <GlassCard className="p-4" hover={false}>
+        <GlassCard className="p-1" hover={false}>
 
             <div className="relative aspect-video rounded-xl overflow-hidden bg-black/20">
                 {showVideo ? (

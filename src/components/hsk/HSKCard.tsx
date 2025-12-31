@@ -20,6 +20,7 @@ interface HSKCardProps {
         descriptionSc: string;
         descriptionTc: string;
         wordCount: number;
+        lessonCount: number;
     };
 }
 
@@ -55,6 +56,11 @@ export function HSKCard({ level, locale, isPurchased = false, isEditing = false,
                         <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
                             {hskData ? hskData.wordCount : t('wordCount.' + level)} {t('words')}
                         </span>
+                        {hskData && (
+                            <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
+                                {hskData.lessonCount} {t('lessons')}
+                            </span>
+                        )}
                         {isEditing && (
                             <Link
                                 href={`/${locale}/hsk/edit/${level}?edit=true`}
