@@ -29,6 +29,9 @@ Beyond standard lessons, the platform emphasizes a user-centric design with a so
 
 ### 文件上传 (File Upload)
 - **Local File Upload**: Upload MP3 and PDF files directly from local device.
+- **Original Filename Retention**: Files are stored with sanitized original names for easy identification.
+- **Duplicate Check**: Automatically detects duplicate files in a lesson and prompts for overwrite with "Update File" workflow.
+- **Cleanup**: Auto-deletes old physical files when updating or deleting content to keep storage clean.
 - **Auto Title Fill**: File name automatically fills the title field (without extension).
 - **YouTube Title Fetch**: Auto-fetch video title from YouTube ID.
 
@@ -99,6 +102,21 @@ Beyond standard lessons, the platform emphasizes a user-centric design with a so
 
    Open [http://localhost:3000](http://localhost:3000) to view the application.
 
+### Important Development Notes
+
+#### Prisma Schema Changes
+If you modify `prisma/schema.prisma`, you must run the following command to update the generated client type definitions:
+```bash
+npx prisma generate
+```
+If you encounter `TypeError` or `P2025` errors after schema changes, try restarting the dev server after generating.
+
+#### Git Policy
+The following are **NOT** tracked in Git:
+- `/prisma/*.db` (Local SQLite database)
+- `/public/uploads/` (User uploaded content)
+- `.env` (Environment variables)
+
 ## 📁 Project Structure
 
 ```
@@ -118,7 +136,7 @@ src/
 └── ...
 locales/                    # i18n translation files (en.json, sc.json, tc.json)
 prisma/                     # Database schema
-public/uploads/             # Uploaded files (audio/, docs/)
+public/uploads/             # Uploaded files (audio/, docs/) [Git Ignored]
 ```
 
 ## 📝 API Endpoints
@@ -127,11 +145,12 @@ public/uploads/             # Uploaded files (audio/, docs/)
 | :--- | :--- | :--- |
 | `/api/upload` | POST | Upload MP3/PDF files |
 | `/api/auth/*` | - | NextAuth authentication endpoints |
+| `updateLessonContentFile` | Server Action | Update content file with overwrite logic |
 
 ## 🔐 Admin Features
 
 Access admin features by logging in with an admin account (role: `admin`):
 - Add/Edit/Delete lessons
-- Upload content (video, audio, documents)
+- Upload content (video, audio, documents) with duplicate detection
 - Reorder lesson content via drag & drop
 - Edit lesson titles and descriptions inline

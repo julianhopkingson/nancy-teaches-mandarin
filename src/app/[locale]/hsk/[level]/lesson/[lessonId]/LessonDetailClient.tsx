@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -26,7 +26,7 @@ import { LessonContentItem } from '@/components/lesson/LessonContentItem';
 import { DeleteConfirmModal } from '@/components/ui/DeleteConfirmModal';
 import { AlertModal } from '@/components/ui/AlertModal';
 
-import { createLessonContent, deleteLessonContent, reorderLessonContent, updateLesson, updateLessonContent } from '@/lib/actions/lesson';
+import { createLessonContent, deleteLessonContent, reorderLessonContent, updateLesson, updateLessonContent, updateLessonContentFile } from '@/lib/actions/lesson';
 
 // --- Types ---
 interface ContentItem {
@@ -35,6 +35,7 @@ interface ContentItem {
     title: string;
     description?: string;
     url: string | null;
+    originalName?: string | null;
     youtubeId: string | null;
     order: number;
 }
@@ -101,11 +102,20 @@ export function LessonDetailClient({
 
     const [contents, setContents] = useState<ContentItem[]>(initialContents);
     const [isSaving, setIsSaving] = useState(false);
+    const dndContextId = useId();
 
     // Add Content Modal State
     const [showAddModal, setShowAddModal] = useState(false);
     const [addType, setAddType] = useState<'video' | 'audio' | 'doc'>('video');
     const [autoTitle, setAutoTitle] = useState('');  // Auto-filled title from file/YouTube
+    const [autoDescription, setAutoDescription] = useState(''); // Auto-filled description for overwrite
+
+    // File Overwrite Mode State
+    const [isOverwriteMode, setIsOverwriteMode] = useState(false);
+    const [overwriteContentId, setOverwriteContentId] = useState<string | null>(null);
+    const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false);
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
+    const [pendingFileName, setPendingFileName] = useState('');
 
     // Delete Modal State
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -123,13 +133,99 @@ export function LessonDetailClient({
         setAlertModal({ isOpen: true, type, title, message });
     };
 
-    // Extract filename without extension
+    // Extract filename and check for duplicates
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
-            setAutoTitle(nameWithoutExt);
+
+            // Check if file with same name already exists in this lesson
+            const existingContent = contents.find(c => {
+                if (c.type !== 'audio' && c.type !== 'doc') return false;
+
+                // 1. Check originalName (new data)
+                if (c.originalName === file.name) return true;
+
+                // 2. Fallback: Check derived name from URL (legacy data)
+                // URL format: /uploads/folder/uuid-originalName.ext
+                if (!c.originalName && c.url) {
+                    try {
+                        const urlFileName = c.url.split('/').pop(); // uuid-originalName.ext
+                        if (urlFileName) {
+                            // Try to extract original name by removing UUID prefix (36 chars + 1 hyphen)
+                            // UUID is 36 chars long. 
+                            const parts = urlFileName.split('-');
+                            if (parts.length >= 6) { // uuid has 5 parts + at least 1 part for filename
+                                // Reconstruct possible original name
+                                // This is tricky because filenames can have hyphens. 
+                                // Let's simplify: check if URL *ends* with the new filename
+                                // But URL has UUID prefix. 
+                                // Better approach: Remove the first 37 chars (uuid + hyphen)
+                                const potentialName = urlFileName.substring(37);
+                                // Decode URI component just in case
+                                return decodeURIComponent(potentialName) === file.name;
+                            }
+                        }
+                    } catch (e) {
+                        return false;
+                    }
+                }
+                return false;
+            });
+
+            if (existingContent) {
+                // Found duplicate - show confirmation dialog
+                setPendingFile(file);
+                setPendingFileName(file.name);
+                setShowOverwriteConfirm(true);
+            } else {
+                // No duplicate - normal flow
+                setAutoTitle(nameWithoutExt);
+                setIsOverwriteMode(false);
+                setOverwriteContentId(null);
+            }
         }
+    };
+
+    // Handle overwrite confirmation
+    const handleOverwriteConfirm = () => {
+        const existingContent = contents.find(c => {
+            if (c.type !== 'audio' && c.type !== 'doc') return false;
+
+            if (c.originalName === pendingFileName) return true;
+
+            // Fallback for legacy data
+            if (!c.originalName && c.url) {
+                try {
+                    const urlFileName = c.url.split('/').pop();
+                    if (urlFileName) {
+                        const potentialName = urlFileName.substring(37);
+                        return decodeURIComponent(potentialName) === pendingFileName;
+                    }
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        });
+        if (existingContent && pendingFile) {
+            // Fill form with existing data
+            setAutoTitle(existingContent.title);
+            setAutoDescription(existingContent.description || '');
+            setIsOverwriteMode(true);
+            setOverwriteContentId(existingContent.id);
+        }
+        setShowOverwriteConfirm(false);
+    };
+
+    // Handle overwrite cancel
+    const handleOverwriteCancel = () => {
+        setShowOverwriteConfirm(false);
+        setPendingFile(null);
+        setPendingFileName('');
+        // Clear file input
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
     };
 
     // Fetch YouTube title using oEmbed API
@@ -217,15 +313,19 @@ export function LessonDetailClient({
         const youtubeId = formData.get('youtubeId') as string;
 
         let url: string | undefined;
+        let originalName: string | undefined;
 
         // Handle file upload for audio/doc
         if (addType === 'audio' || addType === 'doc') {
-            const file = formData.get('file') as File;
+            // Use pendingFile if in overwrite mode, otherwise get from form
+            const file = isOverwriteMode && pendingFile ? pendingFile : formData.get('file') as File;
             if (!file || file.size === 0) {
                 showAlert('warning', '请选择文件', '请先选择一个文件再提交');
                 setIsSaving(false);
                 return;
             }
+
+            originalName = file.name;
 
             // Upload file
             const uploadData = new FormData();
@@ -253,6 +353,33 @@ export function LessonDetailClient({
             }
         }
 
+        // Handle overwrite mode
+        if (isOverwriteMode && overwriteContentId && url && originalName) {
+            const result = await updateLessonContentFile(overwriteContentId, {
+                url,
+                originalName,
+                title,
+                description,
+            });
+
+            if (result.success) {
+                // Reset overwrite mode
+                setIsOverwriteMode(false);
+                setOverwriteContentId(null);
+                setPendingFile(null);
+                setPendingFileName('');
+                setAutoTitle('');
+                setAutoDescription('');
+                setShowAddModal(false);
+                router.refresh();
+            } else {
+                showAlert('error', '更新失败', '文件更新失败，请重试');
+            }
+            setIsSaving(false);
+            return;
+        }
+
+        // Normal create mode
         const result = await createLessonContent({
             lessonId,
             type: addType,
@@ -265,6 +392,8 @@ export function LessonDetailClient({
 
         if (result.success) {
             setShowAddModal(false);
+            setAutoTitle('');
+            setAutoDescription('');
             router.refresh();
         } else {
             showAlert('error', '创建失败', '内容创建失败，请重试');
@@ -376,6 +505,7 @@ export function LessonDetailClient({
                     </div>
                 ) : (
                     <DndContext
+                        id={dndContextId}
                         sensors={sensors}
                         collisionDetection={closestCenter}
                         onDragEnd={handleDragEnd}
@@ -433,7 +563,13 @@ export function LessonDetailClient({
 
                             <div>
                                 <label className="block text-sm font-medium mb-1 dark:text-gray-300">{tHsk('label.contentDescription')}</label>
-                                <textarea name="description" className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent resize-none h-20" placeholder={tContent('label.descriptionPlaceholder')} />
+                                <textarea
+                                    name="description"
+                                    value={autoDescription}
+                                    onChange={(e) => setAutoDescription(e.target.value)}
+                                    className="w-full px-4 py-2 rounded-lg border dark:border-gray-600 bg-transparent resize-none h-20"
+                                    placeholder={tContent('label.descriptionPlaceholder')}
+                                />
                             </div>
 
                             {addType === 'video' && (
@@ -480,9 +616,17 @@ export function LessonDetailClient({
                             )}
 
                             <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">{tHsk('button.cancel')}</button>
+                                <button type="button" onClick={() => {
+                                    setShowAddModal(false);
+                                    setIsOverwriteMode(false);
+                                    setOverwriteContentId(null);
+                                    setPendingFile(null);
+                                    setPendingFileName('');
+                                    setAutoTitle('');
+                                    setAutoDescription('');
+                                }} className="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">{tHsk('button.cancel')}</button>
                                 <button type="submit" disabled={isSaving} className="px-4 py-2 rounded-lg bg-coral text-white hover:bg-coral/90">
-                                    {isSaving ? tHsk('button.save') : tHsk('button.addContent')}
+                                    {isSaving ? tHsk('button.save') : (isOverwriteMode ? tHsk('label.updateFile') : tHsk('button.addContent'))}
                                 </button>
                             </div>
                         </form>
@@ -508,6 +652,17 @@ export function LessonDetailClient({
                 title={alertModal.title}
                 message={alertModal.message}
                 onClose={() => setAlertModal(prev => ({ ...prev, isOpen: false }))}
+            />
+
+            {/* File Overwrite Confirm Modal */}
+            <DeleteConfirmModal
+                isOpen={showOverwriteConfirm}
+                title={tHsk('label.fileExists')}
+                message={tHsk('label.fileExistsMessage')}
+                onConfirm={handleOverwriteConfirm}
+                onCancel={handleOverwriteCancel}
+                confirmText={tHsk('label.confirmOverwrite')}
+                cancelText={tHsk('button.cancel')}
             />
         </div>
     );

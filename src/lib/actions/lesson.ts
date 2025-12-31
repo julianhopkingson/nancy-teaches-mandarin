@@ -171,6 +171,54 @@ export async function deleteLessonContent(id: string) {
     }
 }
 
+// Update existing content with new file (for file overwrite)
+export async function updateLessonContentFile(
+    id: string,
+    data: {
+        url: string;
+        originalName: string;
+        title?: string;
+        description?: string;
+    }
+) {
+    try {
+        // First, get the old content to delete the old file
+        const oldContent = await prisma.lessonContent.findUnique({
+            where: { id },
+            select: { url: true, type: true }
+        });
+
+        // Delete old physical file if it exists
+        if (oldContent?.url && (oldContent.type === 'audio' || oldContent.type === 'doc')) {
+            const fs = await import('fs/promises');
+            const path = await import('path');
+            const filePath = path.join(process.cwd(), 'public', oldContent.url);
+            try {
+                await fs.unlink(filePath);
+                console.log(`Deleted old file: ${filePath}`);
+            } catch (fileError) {
+                console.warn(`Could not delete old file: ${filePath}`, fileError);
+            }
+        }
+
+        // Update the content with new file info
+        const content = await prisma.lessonContent.update({
+            where: { id },
+            data: {
+                url: data.url,
+                originalName: data.originalName,
+                ...(data.title && { title: data.title }),
+                ...(data.description !== undefined && { description: data.description }),
+            },
+        });
+        revalidatePath(`/hsk`);
+        return { success: true, data: content };
+    } catch (error) {
+        console.error('Update content file error:', error);
+        return { success: false, error: 'Failed to update content file' };
+    }
+}
+
 
 export async function reorderLessonContent(items: { id: string; order: number }[]) {
     try {

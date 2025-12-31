@@ -72,7 +72,11 @@
             "contentDescription": "Description",
             "selectAudioFile": "Select Audio File",
             "audioFormats": "Supports MP3, M4A formats",
-            "selectPdfFile": "Select PDF File"
+            "selectPdfFile": "Select PDF File",
+            "fileExists": "File already exists",
+            "fileExistsMessage": "A file with the same name already exists. Overwrite?",
+            "confirmOverwrite": "Overwrite",
+            "updateFile": "Update File"
         }
     },
     "auth": {

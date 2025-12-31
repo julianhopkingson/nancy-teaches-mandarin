@@ -72,7 +72,11 @@
             "contentDescription": "說明",
             "selectAudioFile": "選擇音頻文件",
             "audioFormats": "支持 MP3、M4A 格式",
-            "selectPdfFile": "選擇 PDF 文件"
+            "selectPdfFile": "選擇 PDF 文件",
+            "fileExists": "文件已存在",
+            "fileExistsMessage": "課程中已存在同名文件，是否覆蓋？",
+            "confirmOverwrite": "確認覆蓋",
+            "updateFile": "更新文件"
         }
     },
     "auth": {
