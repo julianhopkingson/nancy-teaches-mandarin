@@ -315,7 +315,16 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                                     localLessons.map((lesson, index) => (
                                         <SortableLessonItem key={lesson.id} id={lesson.id} isEditing={isEditing}>
                                             <div className="relative h-full">
-                                                <Link href={`/${locale}/hsk/${level}/lesson/${lesson.id}`} className={isEditing ? 'pointer-events-none' : ''}>
+                                                <Link
+                                                    href={`/${locale}/hsk/${level}/lesson/${lesson.id}`}
+                                                    className={isEditing ? 'pointer-events-none' : ''}
+                                                    onClick={(e) => {
+                                                        if (!lesson.isFree && !isAdmin) {
+                                                            e.preventDefault();
+                                                            alert(t('message.purchaseRequired'));
+                                                        }
+                                                    }}
+                                                >
                                                     <motion.div
                                                         className={`p-6 rounded-2xl transition-all h-full flex flex-col group relative overflow-hidden bg-white dark:bg-gray-800 border-2 shadow-lg hover:shadow-xl backdrop-blur-sm ${isEditing ? 'border-dashed border-coral/30' : 'border-gray-100 dark:border-gray-700 cursor-pointer'
                                                             }`}

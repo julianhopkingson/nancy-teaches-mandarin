@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { AlertModal } from '@/components/ui/AlertModal';
 import type { Locale } from '@/lib/i18n/request';
 import { AvatarUploadModal } from './AvatarUploadModal';
 import { uploadAvatar } from '@/actions/profile';
@@ -26,7 +27,12 @@ export function ProfileForm({ locale }: ProfileFormProps) {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [alertModal, setAlertModal] = useState<{
+        isOpen: boolean;
+        type: 'success' | 'error' | 'warning' | 'info';
+        title: string;
+        message: string;
+    }>({ isOpen: false, type: 'success', title: '', message: '' });
 
     // Avatar State
     const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -43,7 +49,6 @@ export function ProfileForm({ locale }: ProfileFormProps) {
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setMessage(null);
 
         try {
             const response = await fetch('/api/profile/update', {
@@ -53,14 +58,14 @@ export function ProfileForm({ locale }: ProfileFormProps) {
             });
 
             if (response.ok) {
-                setMessage({ type: 'success', text: t('message.updateSuccess') });
+                setAlertModal({ isOpen: true, type: 'success', title: t('message.updateSuccess'), message: '' });
                 await update({ displayName });
                 router.refresh();
             } else {
-                setMessage({ type: 'error', text: t('message.updateFailed') });
+                setAlertModal({ isOpen: true, type: 'error', title: t('message.updateFailed'), message: '' });
             }
         } catch (error) {
-            setMessage({ type: 'error', text: t('message.updateFailed') });
+            setAlertModal({ isOpen: true, type: 'error', title: t('message.updateFailed'), message: '' });
         }
         setLoading(false);
     };
@@ -68,16 +73,15 @@ export function ProfileForm({ locale }: ProfileFormProps) {
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setMessage(null);
 
         if (newPassword !== confirmPassword) {
-            setMessage({ type: 'error', text: t('message.passwordMismatch') });
+            setAlertModal({ isOpen: true, type: 'error', title: t('message.passwordMismatch'), message: '' });
             setLoading(false);
             return;
         }
 
         if (newPassword.length < 5 || newPassword.length > 10) {
-            setMessage({ type: 'error', text: t('message.passwordLength') });
+            setAlertModal({ isOpen: true, type: 'error', title: t('message.passwordLength'), message: '' });
             setLoading(false);
             return;
         }
@@ -92,19 +96,19 @@ export function ProfileForm({ locale }: ProfileFormProps) {
             const data = await response.json();
 
             if (response.ok) {
-                setMessage({ type: 'success', text: t('message.passwordChanged') });
+                setAlertModal({ isOpen: true, type: 'success', title: t('message.passwordChanged'), message: '' });
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
             } else {
                 if (data.error === 'WRONG_PASSWORD') {
-                    setMessage({ type: 'error', text: t('message.wrongPassword') });
+                    setAlertModal({ isOpen: true, type: 'error', title: t('message.wrongPassword'), message: '' });
                 } else {
-                    setMessage({ type: 'error', text: t('message.updateFailed') });
+                    setAlertModal({ isOpen: true, type: 'error', title: t('message.updateFailed'), message: '' });
                 }
             }
         } catch (error) {
-            setMessage({ type: 'error', text: t('message.updateFailed') });
+            setAlertModal({ isOpen: true, type: 'error', title: t('message.updateFailed'), message: '' });
         }
         setLoading(false);
     };
@@ -141,7 +145,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
 
             const result = await uploadAvatar(formData);
 
-            setMessage({ type: 'success', text: t('message.updateSuccess') });
+            setAlertModal({ isOpen: true, type: 'success', title: t('message.updateSuccess'), message: '' });
             // Close modal
             setShowAvatarModal(false);
             setSelectedImage(null);
@@ -154,7 +158,7 @@ export function ProfileForm({ locale }: ProfileFormProps) {
             router.refresh();
         } catch (error) {
             console.error(error);
-            setMessage({ type: 'error', text: t('message.updateFailed') });
+            setAlertModal({ isOpen: true, type: 'error', title: t('message.updateFailed'), message: '' });
         }
     };
 
@@ -166,12 +170,6 @@ export function ProfileForm({ locale }: ProfileFormProps) {
         <div className="min-h-screen pt-32 px-4 pb-8">
             <div className="max-w-2xl mx-auto space-y-6">
                 <h1 className="text-3xl font-bold">{t('title')}</h1>
-
-                {message && (
-                    <div className={`p-4 rounded-xl ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {message.text}
-                    </div>
-                )}
 
                 {/* Profile Info */}
                 <GlassCard className="p-6" heavy hover={false}>
@@ -333,6 +331,15 @@ export function ProfileForm({ locale }: ProfileFormProps) {
                     onSave={handleSaveAvatar}
                 />
             )}
+
+            {/* Alert Modal */}
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                type={alertModal.type}
+                title={alertModal.title}
+                message={alertModal.message}
+                onClose={() => setAlertModal(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 }

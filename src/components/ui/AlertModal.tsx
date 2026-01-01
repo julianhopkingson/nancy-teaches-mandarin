@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AlertModalProps {
@@ -51,6 +52,18 @@ export function AlertModal({
 }: AlertModalProps) {
     const color = colors[type];
     const icon = icons[type];
+
+    // 禁止背景滚动
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
 
     return (
         <AnimatePresence>

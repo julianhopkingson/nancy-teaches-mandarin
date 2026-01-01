@@ -123,3 +123,39 @@ model HSKLevel {
   wordCount      Int
   updatedAt      DateTime @updatedAt
 }
+
+// 单个等级价格
+model LevelPrice {
+  level     Int      @id // 1-6
+  price     Float    @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+// 组合套餐
+model Bundle {
+  id            String        @id @default(uuid())
+  code          String        @unique // beginner, intermediate, advanced, all, custom
+  nameEn        String        // English name
+  nameSc        String        // Simplified Chinese
+  nameTc        String        // Traditional Chinese
+  descriptionEn String?
+  descriptionSc String?
+  descriptionTc String?
+  icon          String?       // emoji
+  price         Float         @default(0)
+  isActive      Boolean       @default(true)
+  sortOrder     Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  levels        BundleLevel[]
+}
+
+// 组合包含的等级（多对多关系）
+model BundleLevel {
+  id       String @id @default(uuid())
+  bundleId String
+  bundle   Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  level    Int    // 1-6
+
+  @@unique([bundleId, level])
+}

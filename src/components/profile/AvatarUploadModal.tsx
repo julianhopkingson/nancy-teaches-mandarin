@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Cropper, { Area, Point } from 'react-easy-crop';
 import { getCroppedImg } from '@/utils/canvasUtils';
 import { useTranslations } from 'next-intl';
@@ -35,6 +35,14 @@ export function AvatarUploadModal({ imageSrc, onClose, onSave }: AvatarUploadMod
         }
         setLoading(false);
     };
+
+    // 禁止背景滚动
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">

@@ -217,11 +217,45 @@
       "updateSuccess": "更新成功",
       "updateFailed": "更新失败",
       "passwordChanged": "密码已修改",
-      "wrongPassword": "当前密码错误"
+      "wrongPassword": "当前密码错误",
+      "passwordLength": "密码长度必须在5-10个字符之间"
     }
   },
   "legal": {
     "termsContent": "Nancy Teaches Mandarin 提供在线汉语学习课程，包括视频、音频和文档。我们的服务全球可用，帮助学习者从HSK 1到HSK 6系统地学习汉语。",
     "privacyContent": "隐私政策内容..."
+  },
+  "admin": {
+    "title": "管理后台",
+    "priceSettings": "价格设置",
+    "levelPrices": "等级价格",
+    "bundlePrices": "组合套餐",
+    "perLevel": "每个等级",
+    "bundles": {
+      "beginner": {
+        "name": "入门套餐",
+        "levels": "HSK 1-2",
+        "description": "零基础入门首选"
+      },
+      "intermediate": {
+        "name": "进阶套餐",
+        "levels": "HSK 3-4",
+        "description": "提升日常会话能力"
+      },
+      "advanced": {
+        "name": "高级套餐",
+        "levels": "HSK 5-6",
+        "description": "掌握专业汉语"
+      },
+      "all": {
+        "name": "全套课程",
+        "levels": "HSK 1-6",
+        "description": "完整学习之旅"
+      }
+    },
+    "saveSettings": "保存设置",
+    "saving": "保存中...",
+    "saved": "设置已保存！",
+    "loading": "加载中..."
   }
 }

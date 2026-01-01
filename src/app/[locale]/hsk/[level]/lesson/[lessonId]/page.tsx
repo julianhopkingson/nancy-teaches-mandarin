@@ -45,6 +45,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 level={levelNum}
                 currentLessonId={lessonId}
                 locale={locale}
+                isAdmin={isAdmin}
                 hskData={hskResult.data}
             />
 

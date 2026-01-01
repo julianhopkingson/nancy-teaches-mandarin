@@ -217,11 +217,45 @@
             "updateSuccess": "Updated successfully",
             "updateFailed": "Update failed",
             "passwordChanged": "Password changed",
-            "wrongPassword": "Incorrect current password"
+            "wrongPassword": "Incorrect current password",
+            "passwordLength": "Password must be 5-10 characters"
         }
     },
     "legal": {
         "termsContent": "Nancy Teaches Mandarin provides online Chinese learning courses, including videos, audio, and documents. Our services are available to users worldwide, helping learners systematically study Chinese from HSK 1 to HSK 6.",
         "privacyContent": "Privacy Policy Content..."
+    },
+    "admin": {
+        "title": "Admin Panel",
+        "priceSettings": "Price Settings",
+        "levelPrices": "Level Prices",
+        "bundlePrices": "Bundle Prices",
+        "perLevel": "per level",
+        "bundles": {
+            "beginner": {
+                "name": "Beginner Pack",
+                "levels": "HSK 1-2",
+                "description": "Perfect for absolute beginners"
+            },
+            "intermediate": {
+                "name": "Intermediate Pack",
+                "levels": "HSK 3-4",
+                "description": "For conversational fluency"
+            },
+            "advanced": {
+                "name": "Advanced Pack",
+                "levels": "HSK 5-6",
+                "description": "Master professional Chinese"
+            },
+            "all": {
+                "name": "Complete Pack",
+                "levels": "HSK 1-6",
+                "description": "Full learning journey"
+            }
+        },
+        "saveSettings": "Save Settings",
+        "saving": "Saving...",
+        "saved": "Settings saved successfully!",
+        "loading": "Loading..."
     }
 }

@@ -3,25 +3,27 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface DeleteConfirmModalProps {
+interface ConfirmModalProps {
     isOpen: boolean;
     title: string;
     message: string;
-    onConfirm: () => void;
-    onCancel: () => void;
     confirmText?: string;
     cancelText?: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+    danger?: boolean;
 }
 
-export function DeleteConfirmModal({
+export function ConfirmModal({
     isOpen,
     title,
     message,
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
     onConfirm,
     onCancel,
-    confirmText = '删除',
-    cancelText = '取消',
-}: DeleteConfirmModalProps) {
+    danger = false,
+}: ConfirmModalProps) {
     // 禁止背景滚动
     useEffect(() => {
         if (isOpen) {
@@ -57,10 +59,17 @@ export function DeleteConfirmModal({
                     >
                         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl pointer-events-auto text-center">
                             {/* Icon */}
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                </svg>
+                            <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${danger ? 'bg-red-100 dark:bg-red-900/30' : 'bg-blue-100 dark:bg-blue-900/30'
+                                }`}>
+                                {danger ? (
+                                    <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                )}
                             </div>
 
                             {/* Title */}
@@ -74,16 +83,19 @@ export function DeleteConfirmModal({
                             </p>
 
                             {/* Buttons */}
-                            <div className="flex gap-3 justify-center">
+                            <div className="flex gap-3">
                                 <button
                                     onClick={onCancel}
-                                    className="px-6 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+                                    className="flex-1 px-4 py-2.5 rounded-xl bg-gray-200 dark:bg-gray-700 text-text-primary font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                                 >
                                     {cancelText}
                                 </button>
                                 <button
                                     onClick={onConfirm}
-                                    className="px-6 py-2.5 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors font-medium"
+                                    className={`flex-1 px-4 py-2.5 rounded-xl text-white font-medium transition-colors ${danger
+                                        ? 'bg-red-500 hover:bg-red-600'
+                                        : 'bg-coral hover:bg-coral/90'
+                                        }`}
                                 >
                                     {confirmText}
                                 </button>

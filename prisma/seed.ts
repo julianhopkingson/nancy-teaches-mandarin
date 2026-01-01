@@ -149,6 +149,100 @@ async function main() {
     });
 
     console.log('Seeded lessons:', { lesson1, lesson2 });
+
+    // Seed Level Prices
+    console.log('Seeding level prices...');
+    const levelPrices = [
+        { level: 1, price: 19.99 },
+        { level: 2, price: 24.99 },
+        { level: 3, price: 29.99 },
+        { level: 4, price: 34.99 },
+        { level: 5, price: 39.99 },
+        { level: 6, price: 44.99 },
+    ];
+
+    for (const lp of levelPrices) {
+        await prisma.levelPrice.upsert({
+            where: { level: lp.level },
+            update: { price: lp.price },
+            create: lp,
+        });
+    }
+    console.log('Seeded level prices.');
+
+    // Seed Bundles
+    console.log('Seeding bundles...');
+    const bundlesData = [
+        {
+            code: 'beginner',
+            nameEn: 'Beginner Pack',
+            nameSc: '入门套餐',
+            nameTc: '入門套餐',
+            descriptionEn: 'Perfect for absolute beginners',
+            descriptionSc: '零基础入门首选',
+            descriptionTc: '零基礎入門首選',
+            icon: '🌱',
+            price: 39.99,
+            sortOrder: 1,
+            levels: [1, 2],
+        },
+        {
+            code: 'intermediate',
+            nameEn: 'Intermediate Pack',
+            nameSc: '进阶套餐',
+            nameTc: '進階套餐',
+            descriptionEn: 'For conversational fluency',
+            descriptionSc: '提升日常会话能力',
+            descriptionTc: '提升日常會話能力',
+            icon: '🚀',
+            price: 59.99,
+            sortOrder: 2,
+            levels: [3, 4],
+        },
+        {
+            code: 'advanced',
+            nameEn: 'Advanced Pack',
+            nameSc: '高级套餐',
+            nameTc: '高級套餐',
+            descriptionEn: 'Master professional Chinese',
+            descriptionSc: '掌握专业汉语',
+            descriptionTc: '掌握專業漢語',
+            icon: '🏆',
+            price: 79.99,
+            sortOrder: 3,
+            levels: [5, 6],
+        },
+        {
+            code: 'all',
+            nameEn: 'Complete Pack',
+            nameSc: '全套课程',
+            nameTc: '全套課程',
+            descriptionEn: 'Full learning journey',
+            descriptionSc: '完整学习之旅',
+            descriptionTc: '完整學習之旅',
+            icon: '✨',
+            price: 149.99,
+            sortOrder: 4,
+            levels: [1, 2, 3, 4, 5, 6],
+        },
+    ];
+
+    for (const bundleData of bundlesData) {
+        const { levels, ...bundleInfo } = bundleData;
+        const existing = await prisma.bundle.findUnique({ where: { code: bundleInfo.code } });
+
+        if (!existing) {
+            await prisma.bundle.create({
+                data: {
+                    ...bundleInfo,
+                    levels: {
+                        create: levels.map(level => ({ level })),
+                    },
+                },
+            });
+        }
+    }
+    console.log('Seeded bundles.');
 }
 
 main()
