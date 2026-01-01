@@ -128,6 +128,10 @@
         "bundleLevels": "包含等級: HSK {min} - {max}",
         "bundleIncludes": "包含 {count} 個等級",
         "singleLevel": "僅當前等級",
+        "product": {
+            "level": "單級",
+            "bundle": "套餐"
+        },
         "total": "總計",
         "securePaymentNote": "所有支付均由 PayPal 安全處理。支付即代表您同意我們的服務條款。",
         "feature": {

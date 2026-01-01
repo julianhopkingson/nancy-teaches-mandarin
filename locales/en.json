@@ -128,6 +128,10 @@
         "bundleLevels": "Levels: HSK {min} - {max}",
         "bundleIncludes": "Includes {count} Levels",
         "singleLevel": "Single Level",
+        "product": {
+            "level": "LEVEL",
+            "bundle": "BUNDLE"
+        },
         "total": "Total",
         "securePaymentNote": "All payments are securely processed by PayPal. By paying, you agree to our Terms of Service.",
         "feature": {

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export interface ProductCardProps {
     id: string;
@@ -39,15 +40,15 @@ export function ProductCard({
     hideFeatures = false,
     variant = 'default'
 }: ProductCardProps) {
+    const t = useTranslations('payment');
     const isBundle = type === 'bundle';
+    const typeLabel = isBundle ? t('product.bundle') : t('product.level');
 
     // Admin Variant Styles
     const isAdmin = variant === 'admin';
-    const tagClass = isAdmin
-        ? 'bg-gray-100 text-black dark:bg-gray-800 dark:text-white'
-        : isBundle
-            ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300'
-            : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300';
+    const tagClass = isBundle
+        ? 'bg-coral/10 text-coral dark:bg-coral/20 dark:text-coral'
+        : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300';
 
     const titleClass = isAdmin
         ? 'text-black dark:text-white'
@@ -87,7 +88,7 @@ export function ProductCard({
             <div className="flex-shrink-0 w-[120px] md:w-[150px] pr-2">
                 <div className="flex items-center gap-2 mb-1">
                     <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded tracking-wider ${tagClass}`}>
-                        {type}
+                        {typeLabel}
                     </span>
                 </div>
                 <h3 className={`text-base md:text-lg font-bold leading-tight mb-0.5 break-words ${titleClass}`}>
