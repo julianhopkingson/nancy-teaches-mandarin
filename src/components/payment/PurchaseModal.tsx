@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { PayPalProvider, PayPalButton } from '@/components/providers/PayPalProvider';
+import { ProductCard } from './ProductCard';
 import { verifyPurchase, getPricing } from '@/actions/payment';
 import { useRouter } from 'next/navigation';
 
@@ -267,119 +268,5 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
                 </PayPalProvider>
             )}
         </AnimatePresence>
-    );
-}
-
-function ProductCard({
-    id,
-    type,
-    title,
-    subtitle,
-    price,
-    priceLabel,
-    selected,
-    onSelect,
-    bestValue = false,
-    features = [],
-    savedAmount = 0,
-    savedText = ''
-}: {
-    id: string;
-    type: 'level' | 'bundle';
-    title: string;
-    subtitle: string;
-    price: number;
-    priceLabel: string;
-    selected: boolean;
-    onSelect: () => void;
-    bestValue?: boolean;
-    features?: string[];
-    savedAmount?: number;
-    savedText?: string;
-}) {
-    return (
-        <motion.div
-            onClick={onSelect}
-            whileHover={{ y: -2 }}
-            className={`relative rounded-3xl cursor-pointer border-2 transition-all flex 
-                ${selected
-                    ? 'border-coral bg-white dark:bg-gray-800 shadow-xl ring-1 ring-coral/20'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-coral/50'
-                }
-                /* Mobile: 3-Column Row Layout, Increased Height & Padding */
-                flex-row items-center justify-between p-4 min-h-[110px] gap-2
-                /* Desktop: Stacked Column Layout */
-                md:flex-col md:items-start md:justify-start md:p-6 md:h-full md:gap-0
-            `}
-        >
-            {/* Best Value Badge */}
-            {bestValue && (
-                <div className={`
-                    absolute bg-coral text-white font-bold rounded-full shadow-lg z-10
-                    /* Mobile: Top Right Corner, slightly overlapping or just inside */
-                    -top-2 -right-2 text-[10px] px-2 py-0.5
-                    /* Desktop: Centered Pill on top */
-                    md:-top-4 md:right-auto md:left-1/2 md:-translate-x-1/2 md:text-xs md:px-3 md:py-1 md:rounded-full
-                `}>
-                    BEST VALUE
-                </div>
-            )}
-
-            {/* 1. Left Section: Title & Identity - Increased widths and font sizes */}
-            <div className="flex flex-col items-start flex-shrink-0 w-[30%] md:w-full">
-                <div className="mb-1 md:mb-4">
-                    <span className={`text-[10px] md:text-xs font-bold px-1.5 py-0.5 md:px-2 md:py-1 rounded-md uppercase tracking-wider ${type === 'bundle' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'
-                        }`}>
-                        {type === 'bundle' ? 'Bundle' : 'Level'}
-                    </span>
-                </div>
-
-                <h3 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white leading-tight md:mb-2">{title}</h3>
-                <p className="text-gray-400 text-xs md:text-sm md:text-gray-500 mt-1 md:mt-0 md:mb-6 leading-tight">{subtitle}</p>
-            </div>
-
-            {/* 2. Middle Section: Features - Increased font size */}
-            <div className={`flex-grow md:w-full md:mb-8 px-1 md:px-0 ${features.length === 0 ? 'hidden md:block' : ''}`}>
-                <ul className="flex flex-col space-y-1.5 md:space-y-3 justify-center h-full">
-                    {features.length > 0 ? features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-1.5 md:gap-2 text-xs md:text-sm text-gray-600 dark:text-gray-300 font-medium leading-tight">
-                            <span className="text-green-500 flex-shrink-0 mt-[1px] md:mt-0.5">✔</span>
-                            <span className="line-clamp-2 md:line-clamp-none">{feature}</span>
-                        </li>
-                    )) : (
-                        <li className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-600 dark:text-gray-300">
-                            <span className="text-green-500 flex-shrink-0">✔</span>
-                            Unlock Full Access
-                        </li>
-                    )}
-                </ul>
-            </div>
-
-            {/* 3. Right Section: Price & Selection - Increased font size */}
-            <div className="flex flex-col items-end flex-shrink-0 w-[28%] md:w-full md:mt-auto md:pt-6 md:border-t md:border-gray-100 md:dark:border-gray-700">
-                <div className="flex flex-col md:flex-row items-end md:items-baseline gap-0 md:gap-1 text-right md:text-left">
-                    <span className="text-2xl md:text-3xl font-bold text-coral leading-none">${Math.floor(price)}<span className="text-sm md:text-lg">.{price.toFixed(2).split('.')[1]}</span></span>
-                </div>
-
-                {/* Saved Amount Badge */}
-                {savedAmount > 0 && (
-                    <div className="mt-1 md:mt-2 bg-red-50 text-red-500 text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded border border-red-100">
-                        {savedText}
-                    </div>
-                )}
-
-                {/* Mobile Selection Circle */}
-                <div className={`mt-3 w-6 h-6 rounded-full border-2 flex items-center justify-center md:hidden ${selected ? 'border-coral' : 'border-gray-300'
-                    }`}>
-                    {selected && <div className="w-3 h-3 bg-coral rounded-full" />}
-                </div>
-            </div>
-
-            {/* Desktop Selection Checkmark styling override */}
-            <div className={`hidden md:flex absolute top-6 right-6 w-6 h-6 rounded-full border-2 items-center justify-center transition-colors ${selected ? 'border-coral' : 'border-gray-300'
-                }`}>
-                {selected && <div className="w-3 h-3 bg-coral rounded-full" />}
-            </div>
-        </motion.div>
     );
 }

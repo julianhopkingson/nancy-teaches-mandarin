@@ -1,30 +1,12 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { AlertModal } from '@/components/ui/AlertModal';
 import { BundleEditModal } from './BundleEditModal';
+import { LevelEditModal } from './LevelEditModal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
-
-// HSK 等级渐变色
-const levelGradients: Record<number, string> = {
-    1: 'from-green-400 to-emerald-500',
-    2: 'from-blue-400 to-cyan-500',
-    3: 'from-purple-400 to-violet-500',
-    4: 'from-pink-400 to-rose-500',
-    5: 'from-orange-400 to-amber-500',
-    6: 'from-red-400 to-pink-500',
-};
-
-// 组合包颜色
-const bundleColors: Record<string, { bg: string; border: string }> = {
-    beginner: { bg: 'from-green-500/20 to-blue-500/20', border: 'border-green-400/30' },
-    intermediate: { bg: 'from-purple-500/20 to-pink-500/20', border: 'border-purple-400/30' },
-    advanced: { bg: 'from-orange-500/20 to-red-500/20', border: 'border-orange-400/30' },
-    all: { bg: 'from-coral/20 to-orange-500/20', border: 'border-coral/30' },
-};
+import { ProductCard } from '../payment/ProductCard';
 
 interface Bundle {
     id: string;
@@ -61,6 +43,9 @@ export function AdminDashboard() {
         message: string;
     }>({ isOpen: false, type: 'success', title: '', message: '' });
 
+    // Level edit modal
+    const [editingLevel, setEditingLevel] = useState<{ level: number; price: number } | null>(null);
+
     // Bundle edit modal
     const [editingBundle, setEditingBundle] = useState<Bundle | null>(null);
     const [isCreatingBundle, setIsCreatingBundle] = useState(false);
@@ -88,17 +73,17 @@ export function AdminDashboard() {
         }
     };
 
-    const updateLevelPrice = (level: number, price: number) => {
-        setLevelPrices(prev => ({ ...prev, [level]: price }));
-    };
-
-    const handleSaveLevelPrices = async () => {
-        setIsSaving(true);
+    const handleSaveLevelPrice = async (level: number, newPrice: number) => {
         try {
+            // Optimistic update
+            const updatedPrices = { ...levelPrices, [level]: newPrice };
+            setLevelPrices(updatedPrices);
+            setEditingLevel(null);
+
             const response = await fetch('/api/admin/prices/levels', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prices: levelPrices })
+                body: JSON.stringify({ prices: updatedPrices })
             });
 
             if (response.ok) {
@@ -106,7 +91,7 @@ export function AdminDashboard() {
                     isOpen: true,
                     type: 'success',
                     title: t('saved'),
-                    message: '',
+                    message: `HSK ${level} price updated`,
                 });
             } else {
                 throw new Error('Failed to save');
@@ -116,10 +101,9 @@ export function AdminDashboard() {
                 isOpen: true,
                 type: 'error',
                 title: 'Error',
-                message: 'Failed to save level prices',
+                message: 'Failed to save level price',
             });
-        } finally {
-            setIsSaving(false);
+            fetchPrices(); // Revert
         }
     };
 
@@ -193,180 +177,124 @@ export function AdminDashboard() {
         }
     };
 
-    const getBundleColor = (code: string) => {
-        return bundleColors[code] || { bg: 'from-gray-500/20 to-gray-600/20', border: 'border-gray-400/30' };
-    };
-
     if (!mounted || loading) {
         return (
-            <div className="min-h-screen pt-24 pb-12 px-4">
-                <div className="max-w-5xl mx-auto">
-                    <div className="text-3xl font-bold">{t('loading')}</div>
+            <div className="min-h-screen pt-24 pb-12 px-4 bg-gray-50 dark:bg-gray-900">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-3xl font-bold text-gray-400">{t('loading')}</div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-4">
-            <div className="max-w-5xl mx-auto space-y-10">
+        <div className="min-h-screen pt-24 pb-12 px-4 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+            <div className="max-w-5xl mx-auto space-y-12">
+
                 {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center"
-                >
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-coral to-orange-400 bg-clip-text text-transparent">
-                        {t('title')}
-                    </h1>
-                </motion.div>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                            Product Console
+                        </h1>
+                        <p className="text-gray-500">Manage pricing and bundles visibly.</p>
+                    </div>
+                </div>
 
-                {/* Level Prices Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                >
-                    <GlassCard className="p-6" heavy hover={false}>
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                                <span className="text-2xl">📚</span>
-                                <h2 className="text-xl font-bold">{t('levelPrices')}</h2>
+                <section>
+                    <h2 className="text-sm font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider mb-4">Level Pricing</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((level) => (
+                            <div key={level} className="group relative">
+                                <ProductCard
+                                    id={`level-${level}`}
+                                    type="level"
+                                    title={`HSK ${level}`}
+                                    subtitle=""
+                                    price={levelPrices[level] || 0}
+                                    priceLabel="Price"
+                                    selected={false}
+                                    onSelect={() => { }}
+                                    features={[]}
+                                    hideSelection={true}
+                                    hideFeatures={true}
+                                    variant="admin"
+                                />
+                                {/* Edit Overlay */}
+                                <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
+                                    <button
+                                        onClick={() => setEditingLevel({ level, price: levelPrices[level] || 0 })}
+                                        className="bg-black text-white dark:bg-white dark:text-black px-8 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        Edit Price
+                                    </button>
+                                </div>
                             </div>
-                            <motion.button
-                                onClick={handleSaveLevelPrices}
-                                disabled={isSaving}
-                                className="btn-primary px-4 py-2 text-sm flex items-center gap-2"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                {isSaving ? (
-                                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                        <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                    </svg>
-                                ) : (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                )}
-                                {t('saveSettings')}
-                            </motion.button>
-                        </div>
+                        ))}
+                    </div>
+                </section>
 
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                            {[1, 2, 3, 4, 5, 6].map((level) => (
-                                <motion.div
-                                    key={level}
-                                    whileHover={{ scale: 1.02 }}
-                                    className="relative overflow-hidden rounded-2xl p-4 bg-white/5 border border-white/10 shadow-lg"
-                                >
-                                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${levelGradients[level]}`} />
+                <section>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-sm font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider">Bundle Inventory</h2>
+                    </div>
 
-                                    <div className="text-center mb-3">
-                                        <span className={`text-lg font-bold bg-gradient-to-r ${levelGradients[level]} bg-clip-text text-transparent`}>
-                                            HSK {level}
-                                        </span>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-lg">$</span>
-                                        <input
-                                            type="number"
-                                            value={levelPrices[level] || 0}
-                                            onChange={(e) => updateLevelPrice(level, Number(e.target.value))}
-                                            className="w-full px-3 pl-7 py-3 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-center text-xl font-bold"
-                                            step="0.01"
-                                        />
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </GlassCard>
-                </motion.div>
-
-                {/* Bundle Prices Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                >
-                    <GlassCard className="p-6" heavy hover={false}>
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                                <span className="text-2xl">🎁</span>
-                                <h2 className="text-xl font-bold">{t('bundlePrices')}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+                        {bundles.map((bundle) => (
+                            <div key={bundle.id} className="group relative">
+                                <ProductCard
+                                    id={bundle.code}
+                                    type="bundle"
+                                    title={bundle.nameSc || bundle.nameEn} // Use SC for admin view or fallback
+                                    subtitle={`HSK ${bundle.levels[0] || '?'} - ${bundle.levels[bundle.levels.length - 1] || '?'}`}
+                                    price={bundle.price}
+                                    priceLabel="Price"
+                                    selected={false}
+                                    onSelect={() => { }}
+                                    features={bundle.descriptionSc ? bundle.descriptionSc.split('\n') : []}
+                                    savedAmount={0} // No need to calc for admin view
+                                    savedAmount={0} // No need to calc for admin view
+                                    savedText=""
+                                    hideSelection={true}
+                                    variant="admin"
+                                />
+                                {/* Admin Overlay */}
+                                <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
+                                    <button
+                                        onClick={() => setEditingBundle(bundle)}
+                                        className="bg-black text-white dark:bg-white dark:text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => setDeletingBundle(bundle)}
+                                        className="bg-white text-red-500 border border-red-100 px-6 py-3 rounded-xl font-bold shadow-sm hover:bg-red-50 transition-colors flex items-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
-                            <motion.button
-                                onClick={() => setIsCreatingBundle(true)}
-                                className="btn-secondary px-4 py-2 text-sm flex items-center gap-2"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ))}
+
+                        {/* Add New Bundle Card */}
+                        <motion.button
+                            onClick={() => setIsCreatingBundle(true)}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            className="flex flex-col items-center justify-center gap-4 p-8 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-gray-400 hover:text-coral hover:border-coral/50 hover:bg-coral/5 transition-all h-full min-h-[240px]"
+                        >
+                            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
-                                Add Bundle
-                            </motion.button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {bundles.map((bundle) => {
-                                const colors = getBundleColor(bundle.code);
-                                return (
-                                    <motion.div
-                                        key={bundle.id}
-                                        whileHover={{ scale: 1.01 }}
-                                        className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${colors.bg} border ${colors.border} shadow-lg`}
-                                    >
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-2xl">{bundle.icon || '📦'}</span>
-                                                    <h3 className="text-lg font-bold">{bundle.nameSc}</h3>
-                                                </div>
-                                                <p className="text-sm text-text-muted mb-2">
-                                                    HSK {bundle.levels.sort((a, b) => a - b).join(', ')}
-                                                </p>
-                                                <p className="text-sm text-text-muted">
-                                                    {bundle.descriptionSc}
-                                                </p>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => setEditingBundle(bundle)}
-                                                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                                                >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    onClick={() => setDeletingBundle(bundle)}
-                                                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors text-red-400"
-                                                >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="text-3xl font-bold text-coral">
-                                            ${bundle.price.toFixed(2)}
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </div>
-
-                        {bundles.length === 0 && (
-                            <div className="text-center py-12 text-text-muted">
-                                No bundles yet. Click &quot;Add Bundle&quot; to create one.
                             </div>
-                        )}
-                    </GlassCard>
-                </motion.div>
+                            <span className="font-bold text-lg">Create New Bundle</span>
+                        </motion.button>
+                    </div>
+                </section>
             </div>
 
             {/* Alert Modal */}
@@ -377,6 +305,18 @@ export function AdminDashboard() {
                 message={alertModal.message}
                 onClose={() => setAlertModal(prev => ({ ...prev, isOpen: false }))}
             />
+
+            {/* Level Edit Modal */}
+            <AnimatePresence>
+                {editingLevel && (
+                    <LevelEditModal
+                        level={editingLevel.level}
+                        initialPrice={editingLevel.price}
+                        onClose={() => setEditingLevel(null)}
+                        onSave={handleSaveLevelPrice}
+                    />
+                )}
+            </AnimatePresence>
 
             {/* Bundle Edit Modal */}
             <AnimatePresence>
