@@ -218,7 +218,7 @@ export function AdminDashboard() {
                                     variant="admin"
                                 />
                                 {/* Edit Overlay */}
-                                <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
+                                <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
                                     <button
                                         onClick={() => setEditingLevel({ level, price: levelPrices[level] || 0 })}
                                         className="bg-gradient-to-r from-coral to-orange-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-coral/30 hover:shadow-xl hover:shadow-coral/40 hover:scale-105 transition-all flex items-center gap-2"
@@ -256,7 +256,7 @@ export function AdminDashboard() {
                                     variant="admin"
                                 />
                                 {/* Admin Overlay */}
-                                <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
+                                <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
                                     <button
                                         onClick={() => setEditingBundle(bundle)}
                                         className="bg-gradient-to-r from-coral to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-coral/30 hover:shadow-xl hover:shadow-coral/40 hover:scale-105 transition-all flex items-center gap-2"
