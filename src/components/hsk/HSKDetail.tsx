@@ -317,7 +317,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                                             <div className="relative h-full">
                                                 <Link href={`/${locale}/hsk/${level}/lesson/${lesson.id}`} className={isEditing ? 'pointer-events-none' : ''}>
                                                     <motion.div
-                                                        className={`p-6 rounded-2xl transition-all h-full flex flex-col group relative overflow-hidden bg-white dark:bg-gray-800 border-2 shadow-sm hover:shadow-md ${isEditing ? 'border-dashed border-coral/30' : 'border-gray-100 dark:border-gray-700 cursor-pointer'
+                                                        className={`p-6 rounded-2xl transition-all h-full flex flex-col group relative overflow-hidden bg-white dark:bg-gray-800 border-2 shadow-lg hover:shadow-xl backdrop-blur-sm ${isEditing ? 'border-dashed border-coral/30' : 'border-gray-100 dark:border-gray-700 cursor-pointer'
                                                             }`}
                                                         whileHover={!isEditing ? { scale: 1.02 } : {}}
                                                         whileTap={!isEditing ? { scale: 0.98 } : {}}

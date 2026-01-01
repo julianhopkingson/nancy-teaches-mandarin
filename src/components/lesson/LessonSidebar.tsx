@@ -29,6 +29,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
     const t = useTranslations('hsk');
     const [isOpen, setIsOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -37,6 +38,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
 
         // Initial check
         checkMobile();
+        setIsInitialized(true);
 
         // Listener
         window.addEventListener('resize', checkMobile);
@@ -45,7 +47,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
 
     const currentLessonIndex = lessons.findIndex(l => l.id === currentLessonId);
     const currentLesson = lessons[currentLessonIndex];
-    const showSidebar = !isMobile || isOpen;
+    const showSidebar = isInitialized && (!isMobile || isOpen);
 
     return (
         <div className="w-full lg:w-80 flex-shrink-0 bg-white/5 border-r border-white/10 p-4 lg:min-h-screen">
@@ -127,16 +129,16 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
                 </div>
             </div>
 
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
                 {showSidebar && (
                     <motion.div
                         initial={isMobile ? { height: 0, opacity: 0 } : false}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="space-y-2 overflow-hidden lg:block"
+                        className="overflow-hidden lg:block lg:p-2 lg:rounded-xl lg:bg-white/5 lg:border lg:border-white/10 lg:shadow-lg lg:backdrop-blur-sm"
                     >
-                        <div className="pt-2 lg:pt-0 space-y-2">
+                        <div className="space-y-4 px-2 lg:px-0">
                             {lessons.map((lesson, index) => {
                                 const isActive = lesson.id === currentLessonId;
                                 // In mobile expanded view, hide the active lesson because it's already in the header
@@ -145,9 +147,9 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
                                 return (
                                     <Link key={lesson.id} href={`/${locale}/hsk/${level}/lesson/${lesson.id}`} onClick={() => setIsOpen(false)}>
                                         <motion.div
-                                            className={`p-3 rounded-lg transition-colors cursor-pointer flex items-center gap-3 ${isActive
-                                                ? 'bg-coral/20 text-coral border border-coral/30'
-                                                : 'hover:bg-white/5 text-text-secondary'
+                                            className={`p-3 mb-2 rounded-lg transition-colors cursor-pointer flex items-center gap-3 shadow-md ${isActive
+                                                ? 'bg-coral/10 text-coral border border-coral/30'
+                                                : 'bg-white/5 border border-white/10 hover:bg-white/10 text-text-secondary'
                                                 }`}
                                             whileHover={{ x: 4 }}
                                             whileTap={{ scale: 0.98 }}
