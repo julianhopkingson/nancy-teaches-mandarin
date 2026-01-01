@@ -20,19 +20,30 @@ export function AudioPlayer({ src, title }: AudioPlayerProps) {
         if (!audio) return;
 
         const updateTime = () => setCurrentTime(audio.currentTime);
-        const updateDuration = () => setDuration(audio.duration);
+        const updateDuration = () => {
+            if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+                setDuration(audio.duration);
+            }
+        };
         const handleEnded = () => setIsPlaying(false);
 
         audio.addEventListener('timeupdate', updateTime);
         audio.addEventListener('loadedmetadata', updateDuration);
+        audio.addEventListener('durationchange', updateDuration);
+        audio.addEventListener('canplaythrough', updateDuration);
         audio.addEventListener('ended', handleEnded);
+
+        // 尝试立即获取时长（如果已经加载）
+        updateDuration();
 
         return () => {
             audio.removeEventListener('timeupdate', updateTime);
             audio.removeEventListener('loadedmetadata', updateDuration);
+            audio.removeEventListener('durationchange', updateDuration);
+            audio.removeEventListener('canplaythrough', updateDuration);
             audio.removeEventListener('ended', handleEnded);
         };
-    }, []);
+    }, [src]);
 
     const togglePlay = () => {
         const audio = audioRef.current;
@@ -86,28 +97,28 @@ export function AudioPlayer({ src, title }: AudioPlayerProps) {
     };
 
     return (
-        <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3 w-full">
+        <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4 py-3 w-full">
             <audio ref={audioRef} src={src} preload="metadata" />
 
             {/* Play/Pause Button */}
             <button
                 onClick={togglePlay}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-coral text-white hover:bg-coral-dark transition-colors flex-shrink-0"
+                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-coral text-white hover:bg-coral-dark transition-colors flex-shrink-0"
             >
                 {isPlaying ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
                     </svg>
                 ) : (
-                    <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                     </svg>
                 )}
             </button>
 
-            {/* Time Display */}
-            <span className="text-xs text-text-muted w-16 text-center flex-shrink-0">
-                {formatTime(currentTime)} / {formatTime(duration)}
+            {/* Time Display - 单行显示 */}
+            <span className="text-xs text-text-muted whitespace-nowrap flex-shrink-0">
+                {formatTime(currentTime)}/{formatTime(duration)}
             </span>
 
             {/* Progress Bar */}
@@ -117,14 +128,14 @@ export function AudioPlayer({ src, title }: AudioPlayerProps) {
                 max={duration || 0}
                 value={currentTime}
                 onChange={handleSeek}
-                className="flex-1 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full appearance-none cursor-pointer accent-coral"
+                className="flex-1 min-w-0 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full appearance-none cursor-pointer accent-coral"
                 style={{
                     background: `linear-gradient(to right, var(--coral-orange) ${(currentTime / duration) * 100 || 0}%, #d1d5db ${(currentTime / duration) * 100 || 0}%)`
                 }}
             />
 
-            {/* Volume Control */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Volume Control - 移动端只显示静音按钮 */}
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                 <button onClick={toggleMute} className="text-text-muted hover:text-coral transition-colors">
                     {isMuted || volume === 0 ? (
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,6 +148,7 @@ export function AudioPlayer({ src, title }: AudioPlayerProps) {
                         </svg>
                     )}
                 </button>
+                {/* 音量滑块 - 移动端缩短 */}
                 <input
                     type="range"
                     min={0}
@@ -144,7 +156,7 @@ export function AudioPlayer({ src, title }: AudioPlayerProps) {
                     step={0.01}
                     value={isMuted ? 0 : volume}
                     onChange={handleVolumeChange}
-                    className="w-16 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full appearance-none cursor-pointer accent-coral"
+                    className="w-12 sm:w-16 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full appearance-none cursor-pointer accent-coral"
                     style={{
                         background: `linear-gradient(to right, var(--coral-orange) ${(isMuted ? 0 : volume) * 100}%, #d1d5db ${(isMuted ? 0 : volume) * 100}%)`
                     }}
