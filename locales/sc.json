@@ -154,13 +154,25 @@
     }
   },
   "comments": {
-    "title": "评论区",
-    "placeholder": "写下你的想法...",
+    "title": "讨论区",
+    "placeholder": "分享你的想法或提问...",
+    "signInPrompt": "登录后参与讨论...",
+    "empty": "暂无讨论，成为第一个发言的人吧！",
+    "replyCount": "条评论",
+    "replyPlaceholder": "写下评论...",
+    "teacher": "老师",
     "button": {
-      "submit": "发表评论"
+      "submit": "发表",
+      "posting": "发布中...",
+      "send": "发送",
+      "reply": "回复"
     },
     "message": {
-      "loginToComment": "登录后发表评论"
+      "loginToComment": "请登录后发表评论",
+      "loginToPost": "请登录后发言，前往登录？",
+      "loginToLike": "请登录后点赞",
+      "deleteFailed": "删除失败",
+      "postFailed": "发布失败"
     }
   },
   "footer": {

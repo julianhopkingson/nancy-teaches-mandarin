@@ -154,13 +154,25 @@
         }
     },
     "comments": {
-        "title": "Comments",
-        "placeholder": "Write your thoughts...",
+        "title": "Discussion Board",
+        "placeholder": "Share your thoughts or ask a question...",
+        "signInPrompt": "Sign in to join the discussion...",
+        "empty": "No discussion yet. Be the first to post!",
+        "replyCount": "Comments",
+        "replyPlaceholder": "Write a comment...",
+        "teacher": "Teacher",
         "button": {
-            "submit": "Post Comment"
+            "submit": "Post Comment",
+            "posting": "Posting...",
+            "send": "Send",
+            "reply": "Reply"
         },
         "message": {
-            "loginToComment": "Sign in to comment"
+            "loginToComment": "Please sign in to comment",
+            "loginToPost": "Please sign in to post. Go to login page?",
+            "loginToLike": "Please sign in to like",
+            "deleteFailed": "Failed to delete",
+            "postFailed": "Failed to create post"
         }
     },
     "footer": {

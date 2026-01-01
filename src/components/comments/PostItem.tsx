@@ -9,6 +9,7 @@ import { togglePostLike, deletePost, createComment } from '@/actions/comments';
 import { usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { CircleIconButton } from '@/components/ui/CircleIconButton';
+import { useTranslations } from 'next-intl';
 
 interface PostItemProps {
     post: PostWithUser;
@@ -23,10 +24,11 @@ export function PostItem({ post, currentUser, isAdmin, isEditing }: PostItemProp
     const [commentContent, setCommentContent] = useState('');
     const [showCommentForm, setShowCommentForm] = useState(false);
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+    const t = useTranslations('comments');
 
     const handleLike = () => {
         if (!currentUser) {
-            alert('Please sign in to like posts');
+            alert(t('message.loginToLike'));
             return;
         }
         startTransition(async () => {
@@ -58,7 +60,7 @@ export function PostItem({ post, currentUser, isAdmin, isEditing }: PostItemProp
             setShowCommentForm(false);
         } catch (error) {
             console.error(error);
-            alert('Failed to post comment');
+            alert(t('message.postFailed'));
         } finally {
             setIsSubmittingComment(false);
         }
@@ -87,11 +89,11 @@ export function PostItem({ post, currentUser, isAdmin, isEditing }: PostItemProp
                         </div>
                     </div>
                     <div>
-                        <h3 className="font-bold text-base text-text-primary">
-                            {post.user.displayName || post.user.username}
-                            {post.user.role === 'admin' && <span className="ml-2 text-xs bg-coral text-white px-2 py-0.5 rounded-full">ADMIN</span>}
+                        <h3 className="font-bold text-base text-text-primary flex items-center gap-2 flex-wrap">
+                            <span>{post.user.displayName || post.user.username}</span>
+                            {post.user.role === 'admin' && <span className="text-xs bg-coral text-white px-2 py-0.5 rounded-full">{t('teacher')}</span>}
+                            <span className="text-xs text-text-muted font-normal">{new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </h3>
-                        <p className="text-xs text-text-muted">{new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString()}</p>
                     </div>
                 </div>
 
@@ -121,18 +123,22 @@ export function PostItem({ post, currentUser, isAdmin, isEditing }: PostItemProp
                     onClick={handleLike}
                 />
 
+                <div className="flex items-center gap-1.5 text-sm text-text-muted">
+                    <span className="text-lg">💬</span>
+                    <span>{post.comments.length} {t('replyCount')}</span>
+                </div>
+
                 <button
                     onClick={() => {
                         if (!currentUser) {
-                            alert('Please sign in to comment');
+                            alert(t('message.loginToComment'));
                         } else {
                             setShowCommentForm(!showCommentForm);
                         }
                     }}
-                    className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary transition-colors"
+                    className="text-sm text-coral hover:bg-coral hover:text-white px-3 py-1 rounded-full transition-colors font-medium"
                 >
-                    <span className="text-lg">💬</span>
-                    <span>{post.comments.length} Comments</span>
+                    {t('button.reply')}
                 </button>
             </div>
 
@@ -149,7 +155,7 @@ export function PostItem({ post, currentUser, isAdmin, isEditing }: PostItemProp
                             <textarea
                                 value={commentContent}
                                 onChange={e => setCommentContent(e.target.value)}
-                                placeholder="Write a comment..."
+                                placeholder={t('replyPlaceholder')}
                                 className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-coral focus:outline-none text-sm resize-none h-12 min-h-[48px]"
                                 autoFocus
                             />
@@ -158,7 +164,7 @@ export function PostItem({ post, currentUser, isAdmin, isEditing }: PostItemProp
                                 disabled={!commentContent.trim() || isSubmittingComment}
                                 className="px-4 rounded-xl bg-coral text-white font-medium text-sm hover:bg-coral/90 disabled:opacity-50 disabled:cursor-not-allowed h-12"
                             >
-                                Send
+                                {t('button.send')}
                             </button>
                         </form>
                     </motion.div>

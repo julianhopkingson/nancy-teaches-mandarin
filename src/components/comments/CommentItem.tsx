@@ -8,6 +8,7 @@ import { startTransition } from 'react';
 import { toggleCommentLike, deleteComment } from '@/actions/comments';
 import { usePathname } from 'next/navigation';
 import { CircleIconButton } from '@/components/ui/CircleIconButton';
+import { useTranslations } from 'next-intl';
 
 interface CommentItemProps {
     comment: CommentWithUser;
@@ -18,6 +19,7 @@ interface CommentItemProps {
 
 export function CommentItem({ comment, currentUser, isAdmin, isEditing }: CommentItemProps) {
     const pathname = usePathname();
+    const t = useTranslations('comments');
     // Optimistic state could be implemented, but relying on server revalidation for now
     const handleLike = async () => {
         if (!currentUser) return; // Should show login modal? Handled by parent or toast?
@@ -54,13 +56,13 @@ export function CommentItem({ comment, currentUser, isAdmin, isEditing }: Commen
             </div>
 
             <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2 flex-wrap mb-1">
                     <span className="font-medium text-sm text-text-primary">
                         {comment.user.displayName || comment.user.username}
-                        {comment.user.role === 'admin' && <span className="ml-1 text-[10px] bg-coral/20 text-coral px-1.5 py-0.5 rounded-full">ADMIN</span>}
                     </span>
+                    {comment.user.role === 'admin' && <span className="text-[10px] bg-coral text-white px-1.5 py-0.5 rounded-full">{t('teacher')}</span>}
                     <span className="text-xs text-text-muted">
-                        {new Date(comment.createdAt).toLocaleDateString()}
+                        {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                 </div>
 
