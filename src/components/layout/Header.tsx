@@ -39,13 +39,13 @@ export function Header({ locale }: HeaderProps) {
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-coral to-coral-dark flex items-center justify-center text-white font-bold text-xl shadow-lg hover:scale-110 hover:rotate-6 transition-transform">
                             N
                         </div>
-                        <span className="font-bold text-lg hidden sm:block">
+                        <span className="font-bold text-lg hidden lg:block whitespace-nowrap">
                             Nancy <span className="text-coral">{t('brandSubtitle')}</span>
                         </span>
                     </Link>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div className="hidden lg:flex items-center gap-8">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
@@ -70,7 +70,7 @@ export function Header({ locale }: HeaderProps) {
                         <LanguageToggle currentLocale={locale} />
 
                         {isLoggedIn ? (
-                            <div className="hidden sm:flex items-center gap-3">
+                            <div className="hidden lg:flex items-center gap-3">
                                 <Link
                                     href={`/${locale}/profile`}
                                     className="flex items-center gap-2 text-sm text-text-secondary hover:text-coral transition-colors"
@@ -96,7 +96,7 @@ export function Header({ locale }: HeaderProps) {
                             </div>
                         ) : (
                             <Link href={`/${locale}/auth/login`}>
-                                <button className="btn-primary hidden sm:block hover:scale-105 active:scale-95 transition-transform w-[140px]">
+                                <button className="btn-primary hidden lg:block hover:scale-105 active:scale-95 transition-transform whitespace-nowrap px-4 py-2">
                                     {t('login')}
                                 </button>
                             </Link>
@@ -104,7 +104,7 @@ export function Header({ locale }: HeaderProps) {
 
                         {/* Mobile Menu Button */}
                         <button
-                            className="md:hidden p-2"
+                            className="lg:hidden p-2"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,7 +121,7 @@ export function Header({ locale }: HeaderProps) {
 
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
-                <div className="md:hidden mx-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="lg:hidden mx-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="bg-ivory-cream/80 dark:bg-[#1a1a2e]/80 backdrop-blur-xl p-4 flex flex-col gap-4 rounded-2xl border border-white/30 shadow-xl">
                         {navLinks.map((link) => (
                             <Link

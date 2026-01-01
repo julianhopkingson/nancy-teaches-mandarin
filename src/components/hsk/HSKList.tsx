@@ -70,7 +70,7 @@ export function HSKList({ locale, initialLevels, isAdmin }: HSKListProps) {
                 </div>
 
                 {/* HSK Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {initialLevels.map((hsk) => (
                         <HSKCard
                             key={hsk.level}

@@ -310,7 +310,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                             items={localLessons.map(l => l.id)}
                             strategy={verticalListSortingStrategy}
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {localLessons.length > 0 ? (
                                     localLessons.map((lesson, index) => (
                                         <SortableLessonItem key={lesson.id} id={lesson.id} isEditing={isEditing}>

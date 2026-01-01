@@ -38,7 +38,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
     const isLocked = !lesson.isFree && !isAdmin;
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen pt-20">
+        <div className="flex flex-col lg:flex-row min-h-screen pt-20">
             {/* Sidebar */}
             <LessonSidebar
                 lessons={allLessons}
@@ -49,7 +49,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             />
 
             {/* Main Content */}
-            <div className="flex-1 p-4 pt-4 md:p-8 dark:bg-[#1a1a2e] bg-fixed">
+            <div className="flex-1 p-4 pt-4 lg:p-8 dark:bg-[#1a1a2e] bg-fixed">
                 {/* Client Component for Content & Edit */}
                 <LessonDetailClient
                     lessonId={lesson.id}

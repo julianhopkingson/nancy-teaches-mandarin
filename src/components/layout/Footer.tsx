@@ -11,7 +11,7 @@ export function Footer({ locale }: FooterProps) {
 
     return (
         <footer className="py-8 px-4 border-t border-white/10">
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-coral to-coral-dark flex items-center justify-center text-white font-bold">
                         N

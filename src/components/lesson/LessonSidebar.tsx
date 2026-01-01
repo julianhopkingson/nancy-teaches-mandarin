@@ -32,7 +32,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
 
     useEffect(() => {
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+            setIsMobile(window.innerWidth < 1024);
         };
 
         // Initial check
@@ -48,7 +48,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
     const showSidebar = !isMobile || isOpen;
 
     return (
-        <div className="w-full md:w-80 flex-shrink-0 bg-white/5 border-r border-white/10 p-4 md:min-h-screen">
+        <div className="w-full lg:w-80 flex-shrink-0 bg-white/5 border-r border-white/10 p-4 lg:min-h-screen">
             <div className="mb-3">
                 <Link
                     href={`/${locale}/hsk/${level}`}
@@ -95,7 +95,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
                 </div>
 
                 {/* Mobile Design: Current Lesson Card as Toggle Header */}
-                <div className="md:hidden mt-4">
+                <div className="lg:hidden mt-4">
                     {currentLesson && (
                         <div
                             className={`p-4 rounded-xl flex items-center gap-4 transition-all border-2 border-coral/20 bg-coral/5`}
@@ -134,9 +134,9 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, hskData
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="space-y-2 overflow-hidden md:block"
+                        className="space-y-2 overflow-hidden lg:block"
                     >
-                        <div className="pt-2 md:pt-0 space-y-2">
+                        <div className="pt-2 lg:pt-0 space-y-2">
                             {lessons.map((lesson, index) => {
                                 const isActive = lesson.id === currentLessonId;
                                 // In mobile expanded view, hide the active lesson because it's already in the header
