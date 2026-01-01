@@ -49,6 +49,18 @@ export function BundleEditModal({ bundle, onClose, onSave }: BundleEditModalProp
 
     const isNew = !bundle?.id;
 
+    // Auto-generate code from English name for new bundles
+    useEffect(() => {
+        if (isNew && form.nameEn) {
+            const slug = form.nameEn
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            setForm(prev => ({ ...prev, code: slug }));
+        }
+    }, [form.nameEn, isNew]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -114,37 +126,18 @@ export function BundleEditModal({ bundle, onClose, onSave }: BundleEditModalProp
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Code */}
                         <div>
-                            <label className="block text-sm font-medium mb-2">
-                                Code (unique identifier)
+                            <label className="block text-sm font-medium mb-1">
+                                Code (Unique ID)
                             </label>
+                            <p className="text-xs text-gray-400 mb-2">Used for system logic (e.g. 'all' is best value). Auto-generated for new bundles.</p>
                             <input
                                 type="text"
                                 value={form.code}
                                 onChange={(e) => setForm(prev => ({ ...prev, code: e.target.value }))}
                                 className="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none"
-                                placeholder="e.g. beginner, advanced"
+                                placeholder="e.g. beginner-pack"
                                 required
                             />
-                        </div>
-
-                        {/* Icon */}
-                        <div>
-                            <label className="block text-sm font-medium mb-2">Icon</label>
-                            <div className="flex flex-wrap gap-2">
-                                {iconOptions.map(icon => (
-                                    <button
-                                        key={icon}
-                                        type="button"
-                                        onClick={() => setForm(prev => ({ ...prev, icon }))}
-                                        className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl transition-all ${form.icon === icon
-                                            ? 'bg-coral text-white scale-110'
-                                            : 'bg-white/10 hover:bg-white/20'
-                                            }`}
-                                    >
-                                        {icon}
-                                    </button>
-                                ))}
-                            </div>
                         </div>
 
                         {/* Names */}
@@ -184,44 +177,42 @@ export function BundleEditModal({ bundle, onClose, onSave }: BundleEditModalProp
                         {/* Descriptions */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div>
-                                <label className="block text-sm font-medium mb-2">EN Description</label>
-                                <input
-                                    type="text"
+                                <label className="block text-sm font-medium mb-2">EN Description (Split by newline for bullet points)</label>
+                                <textarea
                                     value={form.descriptionEn || ''}
                                     onChange={(e) => setForm(prev => ({ ...prev, descriptionEn: e.target.value }))}
-                                    className="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-sm"
+                                    className="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-sm min-h-[80px]"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2">简中说明</label>
-                                <input
-                                    type="text"
+                                <label className="block text-sm font-medium mb-2">简中说明 (换行分隔)</label>
+                                <textarea
                                     value={form.descriptionSc || ''}
                                     onChange={(e) => setForm(prev => ({ ...prev, descriptionSc: e.target.value }))}
-                                    className="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-sm"
+                                    className="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-sm min-h-[80px]"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2">繁中說明</label>
-                                <input
-                                    type="text"
+                                <label className="block text-sm font-medium mb-2">繁中說明 (換行分隔)</label>
+                                <textarea
                                     value={form.descriptionTc || ''}
                                     onChange={(e) => setForm(prev => ({ ...prev, descriptionTc: e.target.value }))}
-                                    className="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-sm"
+                                    className="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none text-sm min-h-[80px]"
                                 />
                             </div>
                         </div>
 
                         {/* Price */}
+                        {/* Price */}
                         <div>
                             <label className="block text-sm font-medium mb-2">Price (USD)</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">$</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-2xl font-bold text-coral">$</span>
                                 <input
                                     type="number"
                                     value={form.price}
                                     onChange={(e) => setForm(prev => ({ ...prev, price: Number(e.target.value) }))}
-                                    className="w-full px-4 pl-8 py-2 rounded-xl bg-white/10 border border-white/20 focus:border-coral focus:outline-none"
+                                    className="w-40 px-1 py-1 bg-transparent border-b-2 border-coral/30 focus:border-coral outline-none text-4xl font-bold text-coral placeholder-coral/50 transition-colors"
                                     step="0.01"
                                     min="0"
                                     required

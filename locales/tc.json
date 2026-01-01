@@ -118,10 +118,24 @@
     },
     "payment": {
         "title": "購買課程",
+        "unlockMessage": "你的中文進步\n從解鎖 HSK {level} 開始",
         "label": {
             "selectLevel": "選擇等級",
             "selectBundle": "選擇組合",
-            "price": "價格"
+            "price": "價格",
+            "savedMoney": "為您節省 ${amount}"
+        },
+        "bundleLevels": "包含等級: HSK {min} - {max}",
+        "bundleIncludes": "包含 {count} 個等級",
+        "singleLevel": "僅當前等級",
+        "total": "總計",
+        "securePaymentNote": "所有支付均由 PayPal 安全處理。支付即代表您同意我們的服務條款。",
+        "feature": {
+            "levelRange": "覆蓋 HSK {min} 到 {max}",
+            "saveMoney": "比單獨購買更優惠",
+            "allLevels": "全套 HSK 1-6 課程",
+            "lifetimeAccess": "終身訪問權",
+            "support": "優先學習支持"
         },
         "bundle": {
             "all": "全部等級 (HSK 1-6)",

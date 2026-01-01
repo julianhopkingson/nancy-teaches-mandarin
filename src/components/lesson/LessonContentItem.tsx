@@ -3,8 +3,10 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
 import { ProtectedVideo } from '@/components/content/ProtectedVideo';
 import { AudioPlayer } from '@/components/ui/AudioPlayer';
+import { PurchaseModal } from '@/components/payment/PurchaseModal';
 
 interface LessonContentItemProps {
     content: {
@@ -27,6 +29,7 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
     const locale = params.locale as string;
     const level = params.level as string;
     const lessonId = params.lessonId as string;
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
 
     const handleUpdate = (field: 'title' | 'description', value: string) => {
         if (value !== content[field]) {
@@ -65,11 +68,25 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
 
     if (isLocked) {
         return (
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center py-12">
-                <span className="text-4xl mb-4">🔒</span>
-                <h3 className="text-lg font-bold text-text-secondary">{content.title}</h3>
-                <p className="text-text-muted text-sm mt-2">{t('message.purchaseRequired')}</p>
-            </div>
+            <>
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center py-12 group hover:border-coral/30 transition-colors">
+                    <span className="text-4xl mb-4 grayscale group-hover:grayscale-0 transition-all">🔒</span>
+                    <h3 className="text-lg font-bold text-text-secondary">{content.title}</h3>
+                    <p className="text-text-muted text-sm mt-2 mb-6">{t('message.purchaseRequired')}</p>
+                    <button
+                        onClick={() => setShowPurchaseModal(true)}
+                        className="px-6 py-2 bg-coral text-white rounded-full font-bold hover:bg-orange-600 transition-colors shadow-lg hover:shadow-orange-500/20"
+                    >
+                        {t('button.unlockContent') || 'Unlock Content'}
+                    </button>
+                </div>
+                <PurchaseModal
+                    isOpen={showPurchaseModal}
+                    onClose={() => setShowPurchaseModal(false)}
+                    level={parseInt(level) || 1}
+                    userEmail={userEmail}
+                />
+            </>
         );
     }
 
@@ -89,7 +106,6 @@ export function LessonContentItem({ content, userEmail, isLocked = false, isEdit
                 <ProtectedVideo
                     youtubeId={content.youtubeId}
                     title={content.title}
-                    userEmail={userEmail || 'Guest'}
                 />
                 <div>
                     {renderEditableDescription()}

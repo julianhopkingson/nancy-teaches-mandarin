@@ -118,10 +118,24 @@
     },
     "payment": {
         "title": "Purchase Course",
+        "unlockMessage": "Your Chinese progress\nStarts with unlocking HSK {level}",
         "label": {
             "selectLevel": "Select Level",
             "selectBundle": "Select Bundle",
-            "price": "Price"
+            "price": "Price",
+            "savedMoney": "Save ${amount}"
+        },
+        "bundleLevels": "Levels: HSK {min} - {max}",
+        "bundleIncludes": "Includes {count} Levels",
+        "singleLevel": "Single Level",
+        "total": "Total",
+        "securePaymentNote": "All payments are securely processed by PayPal. By paying, you agree to our Terms of Service.",
+        "feature": {
+            "levelRange": "Covers HSK {min} to {max}",
+            "saveMoney": "Bundle Savings",
+            "allLevels": "Complete HSK 1-6",
+            "lifetimeAccess": "Lifetime Access",
+            "support": "Priority Support"
         },
         "bundle": {
             "all": "All Levels (HSK 1-6)",

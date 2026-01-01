@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { CircleIconButton } from '@/components/ui/CircleIconButton';
 import { createLesson, reorderLessons, deleteLesson, updateLessonStatus } from '@/lib/actions/lesson';
+import { PurchaseModal } from '@/components/payment/PurchaseModal';
 import type { Locale } from '@/lib/i18n/request';
 
 import {
@@ -93,6 +94,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [localLessons, setLocalLessons] = useState<Lesson[]>(lessons);
 
@@ -321,7 +323,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                                                     onClick={(e) => {
                                                         if (!lesson.isFree && !isAdmin) {
                                                             e.preventDefault();
-                                                            alert(t('message.purchaseRequired'));
+                                                            setShowPurchaseModal(true);
                                                         }
                                                     }}
                                                 >
@@ -463,6 +465,7 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
             {/* Add Lesson Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    {/* ... modal content ... */}
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -525,6 +528,12 @@ export function HSKDetail({ level, locale, lessons = [], isAdmin = false, hskDat
                     </motion.div>
                 </div>
             )}
+
+            <PurchaseModal
+                isOpen={showPurchaseModal}
+                onClose={() => setShowPurchaseModal(false)}
+                level={level}
+            />
         </div>
     );
 }

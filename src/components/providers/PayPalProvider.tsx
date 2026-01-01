@@ -12,6 +12,7 @@ export function PayPalProvider({ children }: { children: ReactNode }) {
             options={{
                 clientId: paypalClientId,
                 currency: 'USD',
+                disableFunding: 'card,credit',
             }}
         >
             {children}

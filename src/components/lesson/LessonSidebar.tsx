@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { CircleIconButton } from '@/components/ui/CircleIconButton';
-import { AlertModal } from '@/components/ui/AlertModal';
+import { PurchaseModal } from '@/components/payment/PurchaseModal';
 import type { Lesson } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
@@ -33,7 +33,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, isAdmin
     const [isOpen, setIsOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
-    const [showPurchaseAlert, setShowPurchaseAlert] = useState(false);
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -154,7 +154,7 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, isAdmin
                                     const handleClick = (e: React.MouseEvent) => {
                                         if (isLocked) {
                                             e.preventDefault();
-                                            setShowPurchaseAlert(true);
+                                            setShowPurchaseModal(true);
                                             return;
                                         }
                                         setIsOpen(false);
@@ -214,12 +214,10 @@ export function LessonSidebar({ lessons, currentLessonId, level, locale, isAdmin
                 </AnimatePresence>
             </div>
 
-            <AlertModal
-                isOpen={showPurchaseAlert}
-                onClose={() => setShowPurchaseAlert(false)}
-                type="warning"
-                title={tContent('message.purchaseRequired')}
-                message={tContent('message.purchaseRequired')}
+            <PurchaseModal
+                isOpen={showPurchaseModal}
+                onClose={() => setShowPurchaseModal(false)}
+                level={level}
             />
         </>
     );
