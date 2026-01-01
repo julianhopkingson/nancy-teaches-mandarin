@@ -188,24 +188,21 @@ export function AdminDashboard() {
     }
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-4 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <div className="min-h-screen pt-24 pb-12 px-4 bg-background dark:bg-gray-900 text-gray-900 dark:text-gray-100">
             <div className="max-w-5xl mx-auto space-y-12">
 
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                            Product Console
-                        </h1>
-                        <p className="text-gray-500">Manage pricing and bundles visibly.</p>
-                    </div>
+                <div className="mt-6 mb-4">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {t('productConsole')}
+                    </h1>
                 </div>
 
                 <section>
-                    <h2 className="text-sm font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider mb-4">Level Pricing</h2>
+                    <h2 className="text-lg font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider mb-4">{t('levelPricing')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[1, 2, 3, 4, 5, 6].map((level) => (
-                            <div key={level} className="group relative">
+                            <div key={level} className="group relative transition-transform duration-200 hover:scale-[1.02]">
                                 <ProductCard
                                     id={`level-${level}`}
                                     type="level"
@@ -224,10 +221,10 @@ export function AdminDashboard() {
                                 <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
                                     <button
                                         onClick={() => setEditingLevel({ level, price: levelPrices[level] || 0 })}
-                                        className="bg-black text-white dark:bg-white dark:text-black px-8 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+                                        className="bg-gradient-to-r from-coral to-orange-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-coral/30 hover:shadow-xl hover:shadow-coral/40 hover:scale-105 transition-all flex items-center gap-2"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                        Edit Price
+                                        {t('edit')}
                                     </button>
                                 </div>
                             </div>
@@ -237,12 +234,12 @@ export function AdminDashboard() {
 
                 <section>
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-sm font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider">Bundle Inventory</h2>
+                        <h2 className="text-lg font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider">{t('bundleInventory')}</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
                         {bundles.map((bundle) => (
-                            <div key={bundle.id} className="group relative">
+                            <div key={bundle.id} className="group relative transition-transform duration-200 hover:scale-[1.02]">
                                 <ProductCard
                                     id={bundle.code}
                                     type="bundle"
@@ -253,8 +250,7 @@ export function AdminDashboard() {
                                     selected={false}
                                     onSelect={() => { }}
                                     features={bundle.descriptionSc ? bundle.descriptionSc.split('\n') : []}
-                                    savedAmount={0} // No need to calc for admin view
-                                    savedAmount={0} // No need to calc for admin view
+                                    savedAmount={0}
                                     savedText=""
                                     hideSelection={true}
                                     variant="admin"
@@ -263,17 +259,17 @@ export function AdminDashboard() {
                                 <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-4 rounded-3xl z-10 scale-[0.98]">
                                     <button
                                         onClick={() => setEditingBundle(bundle)}
-                                        className="bg-black text-white dark:bg-white dark:text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+                                        className="bg-gradient-to-r from-coral to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-coral/30 hover:shadow-xl hover:shadow-coral/40 hover:scale-105 transition-all flex items-center gap-2"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                        Edit
+                                        {t('edit')}
                                     </button>
                                     <button
                                         onClick={() => setDeletingBundle(bundle)}
                                         className="bg-white text-red-500 border border-red-100 px-6 py-3 rounded-xl font-bold shadow-sm hover:bg-red-50 transition-colors flex items-center gap-2"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        Delete
+                                        {t('delete')}
                                     </button>
                                 </div>
                             </div>
@@ -284,14 +280,14 @@ export function AdminDashboard() {
                             onClick={() => setIsCreatingBundle(true)}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
-                            className="flex flex-col items-center justify-center gap-4 p-8 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-gray-400 hover:text-coral hover:border-coral/50 hover:bg-coral/5 transition-all h-full min-h-[240px]"
+                            className="flex flex-col items-center justify-center gap-3 p-6 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-gray-400 hover:text-coral hover:border-coral/50 hover:bg-coral/5 transition-all"
                         >
                             <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
                             </div>
-                            <span className="font-bold text-lg">Create New Bundle</span>
+                            <span className="font-bold text-lg">{t('createNewBundle')}</span>
                         </motion.button>
                     </div>
                 </section>
@@ -335,10 +331,10 @@ export function AdminDashboard() {
             {/* Delete Confirm Modal */}
             <ConfirmModal
                 isOpen={!!deletingBundle}
-                title="Delete Bundle"
-                message={`Are you sure you want to delete "${deletingBundle?.nameSc}"?`}
-                confirmText="Delete"
-                cancelText="Cancel"
+                title={t('deleteBundle')}
+                message={t('deleteBundleConfirm', { name: deletingBundle?.nameSc || '' })}
+                confirmText={t('delete')}
+                cancelText={t('cancel')}
                 onConfirm={handleDeleteBundle}
                 onCancel={() => setDeletingBundle(null)}
                 danger

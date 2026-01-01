@@ -50,24 +50,21 @@ export function LevelEditModal({ level, initialPrice, onClose, onSave }: LevelEd
                 </button>
 
                 <form onSubmit={handleSubmit} className="p-8">
-                    <div className="text-center mb-8">
-                        <div className="w-24 h-16 mx-auto bg-coral/10 text-coral rounded-2xl flex items-center justify-center text-xl font-bold mb-4">
+                    <div className="text-left mb-8">
+                        <div className="w-24 h-16 bg-coral/10 text-coral rounded-2xl flex items-center justify-center text-xl font-bold mb-4">
                             HSK {level}
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                            Edit Price
-                        </h2>
-                        <p className="text-gray-500 text-sm">
-                            Set the individual purchase price for Level {level}.
+                        <p className="text-gray-900 dark:text-white text-lg font-semibold">
+                            {t('editPriceDesc', { level })}
                         </p>
                     </div>
 
-                    <div className="mb-8 flex justify-center">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider text-center">
-                                Price (USD)
+                    <div className="mb-8 flex justify-end">
+                        <div className="text-right">
+                            <label className="block text-sm font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wider">
+                                {t('priceUsd')}
                             </label>
-                            <div className="group relative inline-flex items-baseline cursor-text justify-center">
+                            <div className="group relative inline-flex items-baseline cursor-text">
                                 <span className="text-2xl font-bold text-coral mr-1">$</span>
                                 <input
                                     type="number"
@@ -84,20 +81,20 @@ export function LevelEditModal({ level, initialPrice, onClose, onSave }: LevelEd
                         </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex justify-center gap-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-3.5 rounded-xl font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                            className="px-6 py-3 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium transition-colors"
                         >
-                            Cancel
+                            {t('cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={isSaving}
-                            className="flex-1 py-3.5 rounded-xl font-bold text-white bg-black dark:bg-white dark:text-black hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2"
+                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-coral to-orange-600 text-white font-bold shadow-lg shadow-coral/30 hover:shadow-xl hover:shadow-coral/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isSaving ? 'Saving...' : 'Save Changes'}
+                            {isSaving ? t('saving') : t('saveChanges')}
                         </button>
                     </div>
                 </form>

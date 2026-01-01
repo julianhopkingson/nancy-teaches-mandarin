@@ -65,11 +65,11 @@ export function ProductCard({
     return (
         <motion.div
             layout
-            whileHover={!disabled ? { y: -4, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)" } : {}}
+            whileHover={!disabled ? { scale: 1.02, boxShadow: "0 12px 40px -10px rgba(0,0,0,0.15)" } : {}}
             whileTap={!disabled ? { scale: 0.98 } : {}}
             onClick={!disabled ? onSelect : undefined}
             className={`
-                relative flex flex-row items-stretch p-4 md:p-6 rounded-3xl bg-white dark:bg-gray-800 border-2 transition-all cursor-pointer shadow-sm min-h-[120px]
+                relative flex flex-row items-stretch p-4 md:p-6 rounded-3xl bg-white dark:bg-gray-800 border-2 transition-all cursor-pointer shadow-md min-h-[120px]
                 ${selected
                     ? 'border-coral shadow-lg shadow-coral/10'
                     : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600'
