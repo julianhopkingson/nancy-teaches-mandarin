@@ -234,7 +234,7 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
                                 })()}
                             </div>
                             {/* Payment Section */}
-                            <div className="w-full max-w-md mx-auto relative z-20 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-3xl shadow-xl border-2 border-coral/10">
+                            <div className="w-full max-w-lg md:max-w-[562px] mx-auto relative z-20 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-3xl shadow-xl border-2 border-coral/10">
                                 {/* Total Price Row - Only visible on Mobile if cards don't show price clearly, but our cards do. 
                                     Actually, let's keep it as the "Checkout" area. */}
                                 <div className="flex justify-between items-center mb-2 md:mb-3">
