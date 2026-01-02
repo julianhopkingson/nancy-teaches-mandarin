@@ -4,7 +4,7 @@
     "hsk": "HSK课程",
     "about": "关于",
     "login": "登录",
-    "admin": "管理后台",
+    "admin": "管理",
     "brandSubtitle": "教你学汉语"
   },
   "hero": {
@@ -244,7 +244,7 @@
     "privacyContent": "隐私政策内容..."
   },
   "admin": {
-    "title": "管理后台",
+    "title": "管理",
     "productConsole": "定价和套餐",
     "productConsoleDesc": "管理定价和套餐。",
     "levelPricing": "等级定价",

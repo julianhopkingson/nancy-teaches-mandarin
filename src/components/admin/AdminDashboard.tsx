@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { AlertModal } from '@/components/ui/AlertModal';
 import { BundleEditModal } from './BundleEditModal';
@@ -29,8 +29,23 @@ interface PricesData {
     bundles: Bundle[];
 }
 
+// Helper to get localized bundle name
+function getBundleName(bundle: Bundle, locale: string): string {
+    if (locale === 'sc') return bundle.nameSc || bundle.nameEn;
+    if (locale === 'tc') return bundle.nameTc || bundle.nameEn;
+    return bundle.nameEn;
+}
+
+// Helper to get localized bundle description
+function getBundleDescription(bundle: Bundle, locale: string): string | null {
+    if (locale === 'sc') return bundle.descriptionSc || bundle.descriptionEn;
+    if (locale === 'tc') return bundle.descriptionTc || bundle.descriptionEn;
+    return bundle.descriptionEn;
+}
+
 export function AdminDashboard() {
     const t = useTranslations('admin');
+    const locale = useLocale();
     const [mounted, setMounted] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -243,13 +258,13 @@ export function AdminDashboard() {
                                 <ProductCard
                                     id={bundle.code}
                                     type="bundle"
-                                    title={bundle.nameSc || bundle.nameEn} // Use SC for admin view or fallback
+                                    title={getBundleName(bundle, locale)}
                                     subtitle={`HSK ${bundle.levels[0] || '?'} - ${bundle.levels[bundle.levels.length - 1] || '?'}`}
                                     price={bundle.price}
                                     priceLabel="Price"
                                     selected={false}
                                     onSelect={() => { }}
-                                    features={bundle.descriptionSc ? bundle.descriptionSc.split('\n') : []}
+                                    features={getBundleDescription(bundle, locale)?.split('\n') || []}
                                     savedAmount={0}
                                     savedText=""
                                     hideSelection={true}

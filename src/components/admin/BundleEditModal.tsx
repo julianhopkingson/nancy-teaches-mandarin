@@ -159,12 +159,13 @@ export function BundleEditModal({ bundle, onClose, onSave }: BundleEditModalProp
                                         {t('priceUsd')}
                                     </label>
                                     <div className="group relative inline-flex items-baseline cursor-text">
-                                        <span className="text-2xl font-bold text-coral mr-1">$</span>
+                                        <span className="text-4xl font-black text-coral leading-none mr-1">$</span>
                                         <input
                                             type="number"
                                             value={form.price}
                                             onChange={(e) => setForm(prev => ({ ...prev, price: Number(e.target.value) }))}
-                                            className="!w-[225px] text-right bg-transparent border-b-2 border-gray-100 dark:border-gray-700 group-hover:border-coral/30 focus:border-coral outline-none text-4xl font-black text-gray-900 dark:text-white placeholder-gray-200 transition-colors p-0 leading-none"
+                                            className="w-32 text-right bg-transparent border-b-2 border-gray-100 dark:border-gray-700 group-hover:border-coral/30 focus:border-coral outline-none text-4xl font-black text-coral placeholder-gray-200 transition-colors p-0 leading-none"
+                                            placeholder="0.00"
                                             step="0.01"
                                             min="0"
                                             required

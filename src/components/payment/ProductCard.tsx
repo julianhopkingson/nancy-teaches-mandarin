@@ -84,6 +84,11 @@ export function ProductCard({
                 </div>
             )}
 
+            {/* Spacer before title when no features (for level cards) - desktop only */}
+            {(hideFeatures || features.length === 0) && (
+                <div className="hidden md:block md:flex-[0.3]" />
+            )}
+
             {/* 1. Left Section: Title & Subtitle - Fixed width, allows wrap */}
             <div className="flex-shrink-0 w-[120px] md:w-[150px] pr-2">
                 <div className="flex items-center gap-2 mb-1">
@@ -99,9 +104,9 @@ export function ProductCard({
                 </p>
             </div>
 
-            {/* Features Section - Expanded width */}
+            {/* Features Section - Expanded width (only for bundles) */}
             {!hideFeatures && features.length > 0 ? (
-                <div className="flex flex-col gap-1 pl-[30px] pr-3 flex-1">
+                <div className="flex flex-col gap-1 pl-[5px] pr-3 flex-1">
                     {features.slice(0, 3).map((feature, idx) => (
                         <span key={idx} className={`text-xs md:text-sm flex items-start gap-1.5 ${featureTextClass}`}>
                             <span className="text-green-500 flex-shrink-0 text-xs md:text-sm">✔</span>
