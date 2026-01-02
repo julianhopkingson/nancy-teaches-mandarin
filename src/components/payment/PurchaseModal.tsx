@@ -34,7 +34,7 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
     const t = useTranslations('payment');
     const locale = useLocale();
     const router = useRouter();
-    const [prices, setPrices] = useState<{ levelPrice: number; bundles: BundleWithLevels[]; allLevelPrices: { level: number; price: number }[] } | null>(null);
+    const [prices, setPrices] = useState<{ levelPrice: number; hskLevel: { descriptionEn: string; descriptionSc: string; descriptionTc: string } | null; bundles: BundleWithLevels[]; allLevelPrices: { level: number; price: number }[] } | null>(null);
     const [selectedOption, setSelectedOption] = useState<{ type: 'level' | 'bundle'; id: string; price: number } | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -179,7 +179,7 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
                             </div>
 
                             {/* Cards Grid */}
-                            <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-4 md:mb-12">
+                            <div className="w-full max-w-lg md:max-w-[562px] mx-auto flex flex-col gap-3 md:gap-4 mb-4 md:mb-12">
                                 {(() => {
                                     if (!prices) return null;
 
@@ -203,7 +203,11 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
                                             title: `HSK ${level}`,
                                             subtitle: t('singleLevel'),
                                             price: prices.levelPrice,
-                                            features: [],
+                                            features: (() => {
+                                                if (!prices.hskLevel) return [];
+                                                const desc = locale === 'en' ? prices.hskLevel.descriptionEn : locale === 'tc' ? prices.hskLevel.descriptionTc : prices.hskLevel.descriptionSc;
+                                                return desc ? desc.split('\n').filter(line => line.trim().length > 0) : [];
+                                            })(),
                                             savedAmount: 0,
                                             savedText: '',
                                             bestValue: false
@@ -233,7 +237,7 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
                             <div className="w-full max-w-md mx-auto relative z-20 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-3xl shadow-xl border-2 border-coral/10">
                                 {/* Total Price Row - Only visible on Mobile if cards don't show price clearly, but our cards do. 
                                     Actually, let's keep it as the "Checkout" area. */}
-                                <div className="flex justify-between items-center mb-4 md:mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                                <div className="flex justify-between items-center mb-2 md:mb-3">
                                     <span className="text-gray-500">{t('total')}</span>
                                     <span className="text-3xl font-bold text-coral">
                                         ${selectedOption?.price.toFixed(2) || '0.00'}
@@ -243,7 +247,7 @@ export function PurchaseModal({ isOpen, level, onClose }: PurchaseModalProps) {
                                 {loading && <div className="text-center py-2 text-coral">Processing...</div>}
                                 {error && <div className="text-center py-2 text-red-500">{error}</div>}
 
-                                <div className="relative min-h-[50px]">
+                                <div className="relative rounded-2xl transition-transform duration-200 hover:scale-[1.02] [&>div]:rounded-2xl [&_iframe]:rounded-2xl">
                                     {selectedOption && (
                                         <PayPalButton
                                             amount={selectedOption.price.toFixed(2)}

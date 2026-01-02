@@ -259,6 +259,7 @@
         "editPrice": "編輯價格",
         "editPriceDesc": "設置 Level {level} 的單獨購買價格",
         "editBundle": "編輯套餐",
+        "editLevel": "編輯等級",
         "newBundle": "新建套餐",
         "editBundleDesc": "配置購買選項和本地化",
         "edit": "編輯",

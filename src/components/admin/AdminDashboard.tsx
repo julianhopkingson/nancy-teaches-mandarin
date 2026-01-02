@@ -24,8 +24,15 @@ interface Bundle {
     levels: number[];
 }
 
+interface HSKLevelData {
+    descriptionEn: string;
+    descriptionSc: string;
+    descriptionTc: string;
+}
+
 interface PricesData {
     levelPrices: Record<number, number>;
+    hskLevels: Record<number, HSKLevelData>;
     bundles: Bundle[];
 }
 
@@ -43,6 +50,14 @@ function getBundleDescription(bundle: Bundle, locale: string): string | null {
     return bundle.descriptionEn;
 }
 
+// Helper to get localized level description
+function getLevelDescription(hskLevel: { descriptionEn: string; descriptionSc: string; descriptionTc: string } | undefined, locale: string): string | null {
+    if (!hskLevel) return null;
+    if (locale === 'sc') return hskLevel.descriptionSc || hskLevel.descriptionEn;
+    if (locale === 'tc') return hskLevel.descriptionTc || hskLevel.descriptionEn;
+    return hskLevel.descriptionEn;
+}
+
 export function AdminDashboard() {
     const t = useTranslations('admin');
     const locale = useLocale();
@@ -50,6 +65,7 @@ export function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [levelPrices, setLevelPrices] = useState<Record<number, number>>({});
+    const [hskLevels, setHskLevels] = useState<Record<number, HSKLevelData>>({});
     const [bundles, setBundles] = useState<Bundle[]>([]);
     const [alertModal, setAlertModal] = useState<{
         isOpen: boolean;
@@ -79,6 +95,7 @@ export function AdminDashboard() {
             if (response.ok) {
                 const data: PricesData = await response.json();
                 setLevelPrices(data.levelPrices);
+                setHskLevels(data.hskLevels || {});
                 setBundles(data.bundles);
             }
         } catch (error) {
@@ -88,17 +105,32 @@ export function AdminDashboard() {
         }
     };
 
-    const handleSaveLevelPrice = async (level: number, newPrice: number) => {
+    const handleSaveLevelPrice = async (level: number, newPrice: number, levelData?: Partial<HSKLevelData>) => {
         try {
             // Optimistic update
             const updatedPrices = { ...levelPrices, [level]: newPrice };
             setLevelPrices(updatedPrices);
+
+            // Update hskLevels if data provided
+            if (levelData) {
+                setHskLevels(prev => ({
+                    ...prev,
+                    [level]: {
+                        descriptionEn: levelData.descriptionEn || '',
+                        descriptionSc: levelData.descriptionSc || '',
+                        descriptionTc: levelData.descriptionTc || '',
+                    }
+                }));
+            }
             setEditingLevel(null);
 
             const response = await fetch('/api/admin/prices/levels', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prices: updatedPrices })
+                body: JSON.stringify({
+                    prices: updatedPrices,
+                    levelData: levelData ? { [level]: levelData } : undefined
+                })
             });
 
             if (response.ok) {
@@ -204,7 +236,7 @@ export function AdminDashboard() {
 
     return (
         <div className="min-h-screen pt-24 pb-12 px-4 bg-background dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-            <div className="max-w-5xl mx-auto space-y-12">
+            <div className="max-w-6xl mx-auto space-y-12">
 
                 {/* Header */}
                 <div className="mt-6 mb-4">
@@ -215,7 +247,7 @@ export function AdminDashboard() {
 
                 <section>
                     <h2 className="text-lg font-bold uppercase text-gray-900 dark:text-gray-100 tracking-wider mb-4">{t('levelPricing')}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {[1, 2, 3, 4, 5, 6].map((level) => (
                             <div key={level} className="group relative transition-transform duration-200 hover:scale-[1.02]">
                                 <ProductCard
@@ -227,9 +259,9 @@ export function AdminDashboard() {
                                     priceLabel="Price"
                                     selected={false}
                                     onSelect={() => { }}
-                                    features={[]}
+                                    features={getLevelDescription(hskLevels[level], locale)?.split('\n').filter(f => f) || []}
                                     hideSelection={true}
-                                    hideFeatures={true}
+                                    hideFeatures={false}
                                     variant="admin"
                                 />
                                 {/* Edit Overlay */}
@@ -323,6 +355,7 @@ export function AdminDashboard() {
                     <LevelEditModal
                         level={editingLevel.level}
                         initialPrice={editingLevel.price}
+                        initialData={hskLevels[editingLevel.level]}
                         onClose={() => setEditingLevel(null)}
                         onSave={handleSaveLevelPrice}
                     />

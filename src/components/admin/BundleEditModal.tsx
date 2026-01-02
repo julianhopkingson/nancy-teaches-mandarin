@@ -181,31 +181,6 @@ export function BundleEditModal({ bundle, onClose, onSave }: BundleEditModalProp
                         {/* Localization Section: 3 Columns */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
 
-                            {/* English Column */}
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <h3 className="font-semibold text-gray-900 dark:text-white">English</h3>
-                                </div>
-                                <div>
-                                    <input
-                                        type="text"
-                                        value={form.nameEn}
-                                        onChange={(e) => setForm(prev => ({ ...prev, nameEn: e.target.value }))}
-                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-coral/20 outline-none font-medium transition-all"
-                                        placeholder="Bundle Name"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <textarea
-                                        value={form.descriptionEn || ''}
-                                        onChange={(e) => setForm(prev => ({ ...prev, descriptionEn: e.target.value }))}
-                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-coral/20 outline-none text-sm min-h-[120px] transition-all"
-                                        placeholder="Description (one feature per line)"
-                                    />
-                                </div>
-                            </div>
-
                             {/* Simplified Chinese Column */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 mb-2">
@@ -252,6 +227,31 @@ export function BundleEditModal({ bundle, onClose, onSave }: BundleEditModalProp
                                         onChange={(e) => setForm(prev => ({ ...prev, descriptionTc: e.target.value }))}
                                         className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-coral/20 outline-none text-sm min-h-[120px] transition-all"
                                         placeholder="套餐說明（每行一點）"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* English Column */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <h3 className="font-semibold text-gray-900 dark:text-white">English</h3>
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        value={form.nameEn}
+                                        onChange={(e) => setForm(prev => ({ ...prev, nameEn: e.target.value }))}
+                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-coral/20 outline-none font-medium transition-all"
+                                        placeholder="Bundle Name"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <textarea
+                                        value={form.descriptionEn || ''}
+                                        onChange={(e) => setForm(prev => ({ ...prev, descriptionEn: e.target.value }))}
+                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-coral/20 outline-none text-sm min-h-[120px] transition-all"
+                                        placeholder="Description (one feature per line)"
                                     />
                                 </div>
                             </div>

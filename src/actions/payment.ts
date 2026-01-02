@@ -70,6 +70,10 @@ export async function getPricing(level: number) {
         where: { level },
     });
 
+    const hskLevel = await prisma.hSKLevel.findUnique({
+        where: { level },
+    });
+
     const bundles = await prisma.bundle.findMany({
         where: {
             isActive: true,
@@ -101,6 +105,11 @@ export async function getPricing(level: number) {
 
     return {
         levelPrice: levelPrice?.price || 29.99,
+        hskLevel: hskLevel ? {
+            descriptionEn: hskLevel.descriptionEn,
+            descriptionSc: hskLevel.descriptionSc,
+            descriptionTc: hskLevel.descriptionTc,
+        } : null,
         bundles: bundles,
         allLevelPrices: allLevelPrices,
     };

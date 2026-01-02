@@ -15,6 +15,11 @@ export async function GET() {
             orderBy: { level: 'asc' }
         });
 
+        // Get HSK level data (descriptions)
+        const hskLevels = await prisma.hSKLevel.findMany({
+            orderBy: { level: 'asc' }
+        });
+
         // Get bundles with their levels
         const bundles = await prisma.bundle.findMany({
             include: { levels: true },
@@ -34,8 +39,23 @@ export async function GET() {
             }
         }
 
+        // Transform HSK levels to object format
+        const hskLevelsMap: Record<number, {
+            descriptionEn: string;
+            descriptionSc: string;
+            descriptionTc: string;
+        }> = {};
+        hskLevels.forEach(hl => {
+            hskLevelsMap[hl.level] = {
+                descriptionEn: hl.descriptionEn,
+                descriptionSc: hl.descriptionSc,
+                descriptionTc: hl.descriptionTc,
+            };
+        });
+
         return NextResponse.json({
             levelPrices: levelPricesMap,
+            hskLevels: hskLevelsMap,
             bundles: bundles.map(b => ({
                 id: b.id,
                 code: b.code,

@@ -259,6 +259,7 @@
         "editPrice": "Edit Price",
         "editPriceDesc": "Set the individual purchase price for Level {level}",
         "editBundle": "Edit Bundle",
+        "editLevel": "Edit Level",
         "newBundle": "New Bundle",
         "editBundleDesc": "Configure purchase options and localization",
         "cancel": "Cancel",

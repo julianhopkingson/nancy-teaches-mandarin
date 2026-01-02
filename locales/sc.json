@@ -259,6 +259,7 @@
     "editPrice": "编辑价格",
     "editPriceDesc": "设置 Level {level} 的单独购买价格",
     "editBundle": "编辑套餐",
+    "editLevel": "编辑等级",
     "newBundle": "新建套餐",
     "editBundleDesc": "配置购买选项和本地化",
     "cancel": "取消",

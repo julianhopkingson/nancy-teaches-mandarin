@@ -106,7 +106,7 @@ export function ProductCard({
 
             {/* Features Section - Expanded width (only for bundles) */}
             {!hideFeatures && features.length > 0 ? (
-                <div className="flex flex-col gap-1 pl-[5px] pr-3 flex-1">
+                <div className="flex flex-col gap-1 pl-[5px] pr-3 flex-1 md:min-w-[200px]">
                     {features.slice(0, 3).map((feature, idx) => (
                         <span key={idx} className={`text-xs md:text-sm flex items-start gap-1.5 ${featureTextClass}`}>
                             <span className="text-green-500 flex-shrink-0 text-xs md:text-sm">✔</span>
@@ -121,9 +121,19 @@ export function ProductCard({
 
 
             {/* 3. Right Section: Price & Selection - Increased font size */}
-            <div className="flex flex-col items-end justify-between flex-shrink-0 min-w-[90px] md:w-[120px] pl-2 md:pl-0 md:justify-center">
-                <div className="flex flex-col items-end gap-0 md:gap-1 text-right">
-                    <span className="text-2xl md:text-3xl font-bold text-coral leading-none">${Math.floor(price)}<span className="text-sm md:text-lg">.{price.toFixed(2).split('.')[1]}</span></span>
+            <div className="flex flex-col items-end justify-between flex-shrink-0 min-w-[90px] md:min-w-[140px] pl-2 md:pl-0 md:justify-center">
+                <div className="flex items-center gap-2 md:gap-4">
+                    <div className="flex flex-col items-end gap-0 md:gap-1 text-right">
+                        <span className="text-2xl md:text-3xl font-bold text-coral leading-none">${Math.floor(price)}<span className="text-sm md:text-lg">.{price.toFixed(2).split('.')[1]}</span></span>
+                    </div>
+
+                    {/* Desktop Selection Circle - next to price */}
+                    {!hideSelection && (
+                        <div className={`hidden md:flex w-6 h-6 rounded-full border-2 items-center justify-center transition-colors flex-shrink-0 ${selected ? 'border-coral' : 'border-gray-300'
+                            }`}>
+                            {selected && <div className="w-3 h-3 bg-coral rounded-full" />}
+                        </div>
+                    )}
                 </div>
 
                 {/* Saved Amount Badge */}
@@ -141,14 +151,6 @@ export function ProductCard({
                     </div>
                 )}
             </div>
-
-            {/* Desktop Selection Checkmark styling override */}
-            {!hideSelection && (
-                <div className={`hidden md:flex absolute top-6 right-6 w-6 h-6 rounded-full border-2 items-center justify-center transition-colors ${selected ? 'border-coral' : 'border-gray-300'
-                    }`}>
-                    {selected && <div className="w-3 h-3 bg-coral rounded-full" />}
-                </div>
-            )}
         </motion.div>
     );
 }
